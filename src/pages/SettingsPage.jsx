@@ -1,0 +1,280 @@
+// src/pages/SettingsPage.jsx
+import React, { useState } from 'react';
+import { Settings, User, Target, Database, Download, Upload, RefreshCw, Save, AlertTriangle } from 'lucide-react';
+import { useBulkTrack } from '../context/BulkTrackContext';
+
+export default function SettingsPage() {
+  const {
+    profile,
+    updateProfile,
+    targets,
+    updateTargets,
+    handleExport,
+    handleImport,
+    handleReset
+  } = useBulkTrack();
+
+  const [profileForm, setProfileForm] = useState({ ...profile });
+  const [targetForm, setTargetForm] = useState({ ...targets });
+  const [showResetConfirm, setShowResetConfirm] = useState(false);
+
+  const handleProfileSubmit = (e) => {
+    e.preventDefault();
+    updateProfile(profileForm);
+  };
+
+  const handleTargetSubmit = (e) => {
+    e.preventDefault();
+    updateTargets(targetForm);
+  };
+
+  const handleFileUpload = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      try {
+        const parsed = JSON.parse(event.target.result);
+        handleImport(parsed);
+      } catch (err) {
+        alert('Failed to parse backup JSON file: ' + err.message);
+      }
+    };
+    reader.readAsText(file);
+  };
+
+  return (
+    <div className="space-y-6 pb-12 animate-fade-in max-w-4xl">
+      
+      {/* Header */}
+      <div>
+        <h2 className="text-xl font-extrabold text-white flex items-center gap-2">
+          <Settings className="w-6 h-6 text-slate-400" />
+          <span>Application Settings & Profile</span>
+        </h2>
+        <p className="text-xs text-slate-400 font-medium mt-1">
+          Customize your profile, daily bulking calorie and macro targets, and export/import backup data.
+        </p>
+      </div>
+
+      {/* 1. Profile Settings Card */}
+      <form onSubmit={handleProfileSubmit} className="glass-panel p-6 rounded-2xl border border-slate-800 space-y-4">
+        <div className="flex items-center gap-2 border-b border-slate-800 pb-3">
+          <User className="w-5 h-5 text-emerald-400" />
+          <h3 className="text-sm font-extrabold text-white uppercase tracking-wider">User Profile</h3>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+          <div>
+            <label className="text-xs font-bold text-slate-300 block mb-1">Name</label>
+            <input
+              type="text"
+              value={profileForm.name}
+              onChange={(e) => setProfileForm({ ...profileForm, name: e.target.value })}
+              className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-white text-sm focus:outline-none focus:border-emerald-500 font-bold"
+            />
+          </div>
+
+          <div>
+            <label className="text-xs font-bold text-slate-300 block mb-1">Age</label>
+            <input
+              type="number"
+              value={profileForm.age}
+              onChange={(e) => setProfileForm({ ...profileForm, age: Number(e.target.value) })}
+              className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-white font-mono text-sm focus:outline-none focus:border-emerald-500"
+            />
+          </div>
+
+          <div>
+            <label className="text-xs font-bold text-slate-300 block mb-1">Height (cm)</label>
+            <input
+              type="number"
+              value={profileForm.heightCm}
+              onChange={(e) => setProfileForm({ ...profileForm, heightCm: Number(e.target.value) })}
+              className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-white font-mono text-sm focus:outline-none focus:border-emerald-500"
+            />
+          </div>
+
+          <div>
+            <label className="text-xs font-bold text-slate-300 block mb-1">Current Weight (kg)</label>
+            <input
+              type="number"
+              step="0.1"
+              value={profileForm.currentWeightKg}
+              onChange={(e) => setProfileForm({ ...profileForm, currentWeightKg: Number(e.target.value) })}
+              className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-white font-mono text-sm focus:outline-none focus:border-emerald-500"
+            />
+          </div>
+
+          <div>
+            <label className="text-xs font-bold text-slate-300 block mb-1">Goal Weight (kg)</label>
+            <input
+              type="number"
+              step="0.1"
+              value={profileForm.goalWeightKg}
+              onChange={(e) => setProfileForm({ ...profileForm, goalWeightKg: Number(e.target.value) })}
+              className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-emerald-400 font-mono text-sm font-bold focus:outline-none focus:border-emerald-500"
+            />
+          </div>
+
+          <div>
+            <label className="text-xs font-bold text-slate-300 block mb-1">Body Fat %</label>
+            <input
+              type="number"
+              step="0.1"
+              value={profileForm.bodyFatPercentage}
+              onChange={(e) => setProfileForm({ ...profileForm, bodyFatPercentage: Number(e.target.value) })}
+              className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-white font-mono text-sm focus:outline-none focus:border-emerald-500"
+            />
+          </div>
+        </div>
+
+        <div className="flex justify-end pt-2">
+          <button
+            type="submit"
+            className="px-5 py-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs uppercase tracking-wider rounded-xl transition shadow flex items-center gap-1.5"
+          >
+            <Save className="w-4 h-4" />
+            <span>Save Profile</span>
+          </button>
+        </div>
+      </form>
+
+      {/* 2. Daily Nutrition Targets Card */}
+      <form onSubmit={handleTargetSubmit} className="glass-panel p-6 rounded-2xl border border-slate-800 space-y-4">
+        <div className="flex items-center gap-2 border-b border-slate-800 pb-3">
+          <Target className="w-5 h-5 text-cyan-400" />
+          <h3 className="text-sm font-extrabold text-white uppercase tracking-wider">Daily Nutrition Targets</h3>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+          <div>
+            <label className="text-xs font-bold text-slate-300 block mb-1">Calories (kcal)</label>
+            <input
+              type="number"
+              value={targetForm.calories}
+              onChange={(e) => setTargetForm({ ...targetForm, calories: Number(e.target.value) })}
+              className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-white font-mono text-sm font-bold focus:outline-none focus:border-cyan-500"
+            />
+          </div>
+
+          <div>
+            <label className="text-xs font-bold text-slate-300 block mb-1">Protein (g)</label>
+            <input
+              type="number"
+              value={targetForm.protein}
+              onChange={(e) => setTargetForm({ ...targetForm, protein: Number(e.target.value) })}
+              className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-emerald-400 font-mono text-sm font-bold focus:outline-none focus:border-cyan-500"
+            />
+          </div>
+
+          <div>
+            <label className="text-xs font-bold text-slate-300 block mb-1">Carbohydrates (g)</label>
+            <input
+              type="number"
+              value={targetForm.carbs}
+              onChange={(e) => setTargetForm({ ...targetForm, carbs: Number(e.target.value) })}
+              className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-cyan-400 font-mono text-sm font-bold focus:outline-none focus:border-cyan-500"
+            />
+          </div>
+
+          <div>
+            <label className="text-xs font-bold text-slate-300 block mb-1">Fat (g)</label>
+            <input
+              type="number"
+              value={targetForm.fat}
+              onChange={(e) => setTargetForm({ ...targetForm, fat: Number(e.target.value) })}
+              className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-amber-400 font-mono text-sm font-bold focus:outline-none focus:border-cyan-500"
+            />
+          </div>
+
+          <div>
+            <label className="text-xs font-bold text-slate-300 block mb-1">Fiber (g)</label>
+            <input
+              type="number"
+              value={targetForm.fiber}
+              onChange={(e) => setTargetForm({ ...targetForm, fiber: Number(e.target.value) })}
+              className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-violet-400 font-mono text-sm font-bold focus:outline-none focus:border-cyan-500"
+            />
+          </div>
+        </div>
+
+        <div className="flex justify-end pt-2">
+          <button
+            type="submit"
+            className="px-5 py-2 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-black text-xs uppercase tracking-wider rounded-xl transition shadow flex items-center gap-1.5"
+          >
+            <Save className="w-4 h-4" />
+            <span>Save Nutrition Targets</span>
+          </button>
+        </div>
+      </form>
+
+      {/* 3. Data Backup, Export & Reset */}
+      <div className="glass-panel p-6 rounded-2xl border border-slate-800 space-y-4">
+        <div className="flex items-center gap-2 border-b border-slate-800 pb-3">
+          <Database className="w-5 h-5 text-purple-400" />
+          <h3 className="text-sm font-extrabold text-white uppercase tracking-wider">Data Persistence & Backup</h3>
+        </div>
+
+        <p className="text-xs text-slate-400">
+          All data is automatically persisted in your local browser storage. You can export a full JSON backup file or restore from a previously saved JSON file anytime.
+        </p>
+
+        <div className="flex flex-wrap items-center gap-3 pt-2">
+          <button
+            onClick={handleExport}
+            className="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-emerald-400 text-xs font-bold rounded-xl transition flex items-center gap-2"
+          >
+            <Download className="w-4 h-4" />
+            <span>Export Data (JSON)</span>
+          </button>
+
+          <label className="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-cyan-400 text-xs font-bold rounded-xl transition cursor-pointer flex items-center gap-2">
+            <Upload className="w-4 h-4" />
+            <span>Import Backup (JSON)</span>
+            <input type="file" accept=".json" onChange={handleFileUpload} className="hidden" />
+          </label>
+
+          <button
+            onClick={() => setShowResetConfirm(true)}
+            className="px-4 py-2.5 bg-slate-900 border border-rose-500/30 text-rose-400 hover:bg-rose-950/40 text-xs font-bold rounded-xl transition flex items-center gap-2 ml-auto"
+          >
+            <RefreshCw className="w-4 h-4" />
+            <span>Reset All Data</span>
+          </button>
+        </div>
+
+        {/* Reset Confirmation Box */}
+        {showResetConfirm && (
+          <div className="p-4 bg-rose-950/60 border border-rose-500/50 rounded-xl space-y-3 animate-fade-in">
+            <div className="flex items-center gap-2 text-xs font-bold text-rose-300">
+              <AlertTriangle className="w-4 h-4 text-rose-400" />
+              <span>Are you sure you want to delete all saved meal logs, custom foods, workouts, and settings?</span>
+            </div>
+            <div className="flex items-center gap-2 justify-end">
+              <button
+                onClick={() => setShowResetConfirm(false)}
+                className="px-3 py-1.5 bg-slate-800 text-xs font-bold text-slate-300 rounded-lg hover:bg-slate-700"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  handleReset();
+                  setShowResetConfirm(false);
+                }}
+                className="px-4 py-1.5 bg-rose-600 text-xs font-black text-white rounded-lg hover:bg-rose-500 shadow"
+              >
+                Yes, Reset Everything
+              </button>
+            </div>
+          </div>
+        )}
+
+      </div>
+
+    </div>
+  );
+}
