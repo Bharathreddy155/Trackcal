@@ -11,7 +11,7 @@ import {
 } from '../services/storageService';
 import { getFormattedDateString, addDaysToDate } from '../services/dateService';
 import { getPlannedMealItems, getFoodById } from '../services/nutritionEngine';
-import { subscribeToCloudSync, pushToCloudSync } from '../services/firebase';
+import { pushCloudData, fetchCloudData } from '../services/cloudSync';
 
 const BulkTrackContext = createContext();
 
@@ -27,11 +27,12 @@ export function BulkTrackProvider({ children }) {
   const [syncCode, setSyncCode] = useState(() => {
     return localStorage.getItem('bulktrack_sync_code') || 'bharath-bulking-70kg';
   });
-  const [isCloudConnected, setIsCloudConnected] = useState(false);
+  const [isCloudConnected, setIsCloudConnected] = useState(true);
   const [lastSyncTime, setLastSyncTime] = useState(null);
 
   const [toastMessage, setToastMessage] = useState(null);
-  const isRemoteUpdatingRef = useRef(false);
+  const lastCloudTimestampRef = useRef(0);
+  const isSyncingRef = useRef(false);
 
   // Sync state to LocalStorage
   useEffect(() => saveProfile(profile), [profile]);
@@ -47,40 +48,9 @@ export function BulkTrackProvider({ children }) {
     setTimeout(() => setToastMessage(null), 3500);
   };
 
-  // Real-time Cloud Sync Listener (Firestore)
-  useEffect(() => {
-    if (!syncCode) return;
-
-    const unsubscribe = subscribeToCloudSync(
-      syncCode,
-      (remoteData) => {
-        if (!remoteData) return;
-        isRemoteUpdatingRef.current = true;
-
-        if (remoteData.profile) setProfileState(remoteData.profile);
-        if (remoteData.targets) setTargetsState(remoteData.targets);
-        if (remoteData.foods) setFoodsState(remoteData.foods);
-        if (remoteData.mealTemplates) setMealTemplatesState(remoteData.mealTemplates);
-        if (remoteData.dailyLogs) setDailyLogsState(remoteData.dailyLogs);
-
-        setIsCloudConnected(true);
-        setLastSyncTime(new Date().toLocaleTimeString());
-
-        setTimeout(() => {
-          isRemoteUpdatingRef.current = false;
-        }, 500);
-      },
-      (err) => {
-        setIsCloudConnected(false);
-      }
-    );
-
-    return () => unsubscribe();
-  }, [syncCode]);
-
-  // Push local updates to Cloud automatically
+  // Helper to push local data to Cloud
   const syncToCloud = async (overrideLogs, overrideProfile, overrideTargets, overrideFoods, overrideTemplates) => {
-    if (isRemoteUpdatingRef.current || !syncCode) return;
+    if (!syncCode) return;
 
     const payload = {
       profile: overrideProfile || profile,
@@ -90,12 +60,59 @@ export function BulkTrackProvider({ children }) {
       dailyLogs: overrideLogs || dailyLogs
     };
 
-    const success = await pushToCloudSync(syncCode, payload);
+    const now = Date.now();
+    lastCloudTimestampRef.current = now;
+    isSyncingRef.current = true;
+
+    const success = await pushCloudData(syncCode, payload);
     if (success) {
       setIsCloudConnected(true);
       setLastSyncTime(new Date().toLocaleTimeString());
     }
+
+    setTimeout(() => {
+      isSyncingRef.current = false;
+    }, 1000);
   };
+
+  // Polling Cloud for Remote Updates (Every 3 seconds & on focus)
+  useEffect(() => {
+    if (!syncCode) return;
+
+    const checkCloud = async () => {
+      if (isSyncingRef.current) return;
+
+      const cloudResult = await fetchCloudData(syncCode);
+      if (cloudResult && cloudResult.payload && cloudResult.updatedAt > lastCloudTimestampRef.current + 500) {
+        lastCloudTimestampRef.current = cloudResult.updatedAt;
+        const p = cloudResult.payload;
+
+        if (p.profile) setProfileState(p.profile);
+        if (p.targets) setTargetsState(p.targets);
+        if (p.foods) setFoodsState(p.foods);
+        if (p.mealTemplates) setMealTemplatesState(p.mealTemplates);
+        if (p.dailyLogs) setDailyLogsState(p.dailyLogs);
+
+        setIsCloudConnected(true);
+        setLastSyncTime(new Date().toLocaleTimeString());
+      }
+    };
+
+    // Initial check on load
+    checkCloud();
+
+    // Poll every 3.5 seconds
+    const interval = setInterval(checkCloud, 3500);
+
+    // Also check on window focus
+    const handleFocus = () => checkCloud();
+    window.addEventListener('focus', handleFocus);
+
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener('focus', handleFocus);
+    };
+  }, [syncCode]);
 
   // Helper to ensure current date log exists
   const getCurrentDailyLog = () => {
@@ -279,7 +296,7 @@ export function BulkTrackProvider({ children }) {
     showToast(`Saved current ${mealType} as new default for ${currentLog.dayType === 'chicken' ? 'Chicken Day' : 'Non-Chicken Day'}!`, 'success');
   };
 
-  // Supplement Logging - Whey with Double-Counting Check!
+  // Supplement Logging - Whey
   const logWhey = (scoops = 1, forceExtra = false) => {
     const currentLog = getCurrentDailyLog();
     const isSnackLogged = currentLog.meals.snack?.isLogged;
