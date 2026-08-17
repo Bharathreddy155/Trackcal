@@ -2,23 +2,23 @@
 import { initializeApp, getApps } from 'firebase/app';
 import { getFirestore, doc, setDoc, onSnapshot, serverTimestamp } from 'firebase/firestore';
 
-// Default Firebase configuration for BulkTrack cloud sync
-const DEFAULT_FIREBASE_CONFIG = {
-  apiKey: "AIzaSyBulkTrackDefaultKeyForSync2026",
-  authDomain: "bulktrack-sync.firebaseapp.com",
-  projectId: "bulktrack-sync",
-  storageBucket: "bulktrack-sync.appspot.com",
-  messagingSenderId: "987654321012",
-  appId: "1:987654321012:web:a1b2c3d4e5f6g7h8i9j0"
+// Bharath's Official Firebase Project Configuration
+export const firebaseConfig = {
+  apiKey: "AIzaSyAkxA8I_CbXiJ0wxgWUA8Ob8qUMLnC7deI",
+  authDomain: "bulktrack976.firebaseapp.com",
+  projectId: "bulktrack976",
+  storageBucket: "bulktrack976.firebasestorage.app",
+  messagingSenderId: "1072185597441",
+  appId: "1:1072185597441:web:d06bc6e47c37380b586a00",
+  measurementId: "G-F0W8YKMV58"
 };
 
 let app;
 let db;
 
-export function getFirebaseInstance(customConfig = null) {
-  const config = customConfig || DEFAULT_FIREBASE_CONFIG;
+export function getFirebaseInstance() {
   if (!getApps().length) {
-    app = initializeApp(config);
+    app = initializeApp(firebaseConfig);
   } else {
     app = getApps()[0];
   }
@@ -26,7 +26,7 @@ export function getFirebaseInstance(customConfig = null) {
   return { app, db };
 }
 
-// Initializing default instance
+// Initializing instance
 try {
   getFirebaseInstance();
 } catch (e) {
@@ -34,14 +34,15 @@ try {
 }
 
 /**
- * Subscribes to real-time changes for a specific Sync Code (e.g., 'bharath-70kg-sync')
+ * Subscribes to real-time changes for a specific Sync Code (e.g., 'bharath-bulking-70kg') via Firebase Firestore onSnapshot
  */
 export function subscribeToCloudSync(syncCode, onDataReceived, onError) {
-  if (!syncCode || !db) return () => {};
+  if (!syncCode) return () => {};
 
   try {
+    if (!db) getFirebaseInstance();
     const docRef = doc(db, 'bulktrack_data', syncCode.toLowerCase().trim());
-    
+
     const unsubscribe = onSnapshot(
       docRef,
       (snapshot) => {
@@ -51,7 +52,7 @@ export function subscribeToCloudSync(syncCode, onDataReceived, onError) {
         }
       },
       (err) => {
-        console.warn('Firestore snapshot error:', err);
+        console.warn('Firestore snapshot listener warning:', err);
         if (onError) onError(err);
       }
     );
@@ -67,9 +68,10 @@ export function subscribeToCloudSync(syncCode, onDataReceived, onError) {
  * Pushes updated local data to Firebase Firestore
  */
 export async function pushToCloudSync(syncCode, payload) {
-  if (!syncCode || !db) return false;
+  if (!syncCode) return false;
 
   try {
+    if (!db) getFirebaseInstance();
     const docRef = doc(db, 'bulktrack_data', syncCode.toLowerCase().trim());
     const dataToSave = {
       ...payload,
