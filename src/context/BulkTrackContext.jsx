@@ -1,5 +1,5 @@
 // src/context/BulkTrackContext.jsx
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import {
   loadProfile, saveProfile,
   loadTargets, saveTargets,
@@ -11,6 +11,7 @@ import {
 } from '../services/storageService';
 import { getFormattedDateString, addDaysToDate } from '../services/dateService';
 import { getPlannedMealItems, getFoodById } from '../services/nutritionEngine';
+import { subscribeToCloudSync, pushToCloudSync } from '../services/firebase';
 
 const BulkTrackContext = createContext();
 
@@ -21,19 +22,79 @@ export function BulkTrackProvider({ children }) {
   const [foods, setFoodsState] = useState(loadFoods);
   const [mealTemplates, setMealTemplatesState] = useState(loadMealTemplates);
   const [dailyLogs, setDailyLogsState] = useState(loadDailyLogs);
-  const [toastMessage, setToastMessage] = useState(null);
 
-  // Sync to LocalStorage on changes
+  // Cloud Sync State
+  const [syncCode, setSyncCode] = useState(() => {
+    return localStorage.getItem('bulktrack_sync_code') || 'bharath-bulking-70kg';
+  });
+  const [isCloudConnected, setIsCloudConnected] = useState(false);
+  const [lastSyncTime, setLastSyncTime] = useState(null);
+
+  const [toastMessage, setToastMessage] = useState(null);
+  const isRemoteUpdatingRef = useRef(false);
+
+  // Sync state to LocalStorage
   useEffect(() => saveProfile(profile), [profile]);
   useEffect(() => saveTargets(targets), [targets]);
   useEffect(() => saveFoods(foods), [foods]);
   useEffect(() => saveMealTemplates(mealTemplates), [mealTemplates]);
   useEffect(() => saveDailyLogs(dailyLogs), [dailyLogs]);
+  useEffect(() => localStorage.setItem('bulktrack_sync_code', syncCode), [syncCode]);
 
   // Toast Helper
   const showToast = (message, type = 'info') => {
     setToastMessage({ message, type, id: Date.now() });
     setTimeout(() => setToastMessage(null), 3500);
+  };
+
+  // Real-time Cloud Sync Listener (Firestore)
+  useEffect(() => {
+    if (!syncCode) return;
+
+    const unsubscribe = subscribeToCloudSync(
+      syncCode,
+      (remoteData) => {
+        if (!remoteData) return;
+        isRemoteUpdatingRef.current = true;
+
+        if (remoteData.profile) setProfileState(remoteData.profile);
+        if (remoteData.targets) setTargetsState(remoteData.targets);
+        if (remoteData.foods) setFoodsState(remoteData.foods);
+        if (remoteData.mealTemplates) setMealTemplatesState(remoteData.mealTemplates);
+        if (remoteData.dailyLogs) setDailyLogsState(remoteData.dailyLogs);
+
+        setIsCloudConnected(true);
+        setLastSyncTime(new Date().toLocaleTimeString());
+
+        setTimeout(() => {
+          isRemoteUpdatingRef.current = false;
+        }, 500);
+      },
+      (err) => {
+        setIsCloudConnected(false);
+      }
+    );
+
+    return () => unsubscribe();
+  }, [syncCode]);
+
+  // Push local updates to Cloud automatically
+  const syncToCloud = async (overrideLogs, overrideProfile, overrideTargets, overrideFoods, overrideTemplates) => {
+    if (isRemoteUpdatingRef.current || !syncCode) return;
+
+    const payload = {
+      profile: overrideProfile || profile,
+      targets: overrideTargets || targets,
+      foods: overrideFoods || foods,
+      mealTemplates: overrideTemplates || mealTemplates,
+      dailyLogs: overrideLogs || dailyLogs
+    };
+
+    const success = await pushToCloudSync(syncCode, payload);
+    if (success) {
+      setIsCloudConnected(true);
+      setLastSyncTime(new Date().toLocaleTimeString());
+    }
   };
 
   // Helper to ensure current date log exists
@@ -49,7 +110,9 @@ export function BulkTrackProvider({ children }) {
     setDailyLogsState(prev => {
       const current = prev[currentDate] || createEmptyDailyLog(currentDate);
       const updated = typeof updaterFn === 'function' ? updaterFn(current) : { ...current, ...updaterFn };
-      return { ...prev, [currentDate]: updated };
+      const nextLogs = { ...prev, [currentDate]: updated };
+      syncToCloud(nextLogs);
+      return nextLogs;
     });
   };
 
@@ -79,13 +142,12 @@ export function BulkTrackProvider({ children }) {
     });
   };
 
-  // Log Meal Action (populates fixed foods if list is empty)
+  // Log Meal Action
   const logMeal = (mealType) => {
     const currentLog = getCurrentDailyLog();
     const existingMeal = currentLog.meals[mealType] || {};
 
     let itemsToLog = existingMeal.items || [];
-    // If meal has no items yet, load default planned template items
     if (itemsToLog.length === 0) {
       itemsToLog = getPlannedMealItems(
         currentLog.dayType,
@@ -145,11 +207,7 @@ export function BulkTrackProvider({ children }) {
         ...log,
         meals: {
           ...log.meals,
-          [mealType]: {
-            ...meal,
-            // If adding food to a non-logged meal, keep items ready
-            items: updatedItems
-          }
+          [mealType]: { ...meal, items: updatedItems }
         }
       };
     });
@@ -206,13 +264,17 @@ export function BulkTrackProvider({ children }) {
     const currentItems = currentLog.meals[mealType]?.items;
     if (!currentItems || currentItems.length === 0) return;
 
-    setMealTemplatesState(prev => ({
-      ...prev,
-      [currentLog.dayType]: {
-        ...prev[currentLog.dayType],
-        [mealType]: currentItems
-      }
-    }));
+    setMealTemplatesState(prev => {
+      const nextTemplates = {
+        ...prev,
+        [currentLog.dayType]: {
+          ...prev[currentLog.dayType],
+          [mealType]: currentItems
+        }
+      };
+      syncToCloud(null, null, null, null, nextTemplates);
+      return nextTemplates;
+    });
 
     showToast(`Saved current ${mealType} as new default for ${currentLog.dayType === 'chicken' ? 'Chicken Day' : 'Non-Chicken Day'}!`, 'success');
   };
@@ -316,8 +378,11 @@ export function BulkTrackProvider({ children }) {
 
     updateCurrentDailyLog(log => ({ ...log, weight: val }));
 
-    // Also update profile current weight
-    setProfileState(prev => ({ ...prev, currentWeightKg: val }));
+    setProfileState(prev => {
+      const nextProfile = { ...prev, currentWeightKg: val };
+      syncToCloud(null, nextProfile);
+      return nextProfile;
+    });
     showToast(`Weight recorded: ${val} kg ⚖️`, 'success');
   };
 
@@ -340,13 +405,16 @@ export function BulkTrackProvider({ children }) {
     };
 
     setFoodsState(prev => {
+      let updated;
       const existsIndex = prev.findIndex(f => f.id === newFood.id);
       if (existsIndex >= 0) {
-        const updated = [...prev];
+        updated = [...prev];
         updated[existsIndex] = newFood;
-        return updated;
+      } else {
+        updated = [...prev, newFood];
       }
-      return [...prev, newFood];
+      syncToCloud(null, null, null, updated);
+      return updated;
     });
 
     showToast(`Custom food "${newFood.name}" saved! 🍎`, 'success');
@@ -354,26 +422,49 @@ export function BulkTrackProvider({ children }) {
   };
 
   const toggleFavoriteFood = (foodId) => {
-    setFoodsState(prev => prev.map(f => f.id === foodId ? { ...f, isFavorite: !f.isFavorite } : f));
+    setFoodsState(prev => {
+      const updated = prev.map(f => f.id === foodId ? { ...f, isFavorite: !f.isFavorite } : f);
+      syncToCloud(null, null, null, updated);
+      return updated;
+    });
   };
 
   const deleteFood = (foodId) => {
-    setFoodsState(prev => prev.filter(f => f.id !== foodId));
+    setFoodsState(prev => {
+      const updated = prev.filter(f => f.id !== foodId);
+      syncToCloud(null, null, null, updated);
+      return updated;
+    });
     showToast(`Food deleted`, 'info');
   };
 
   // Profile & Target Updates
   const updateProfile = (newProfile) => {
-    setProfileState(prev => ({ ...prev, ...newProfile }));
+    setProfileState(prev => {
+      const updated = { ...prev, ...newProfile };
+      syncToCloud(null, updated);
+      return updated;
+    });
     showToast(`Profile updated`, 'success');
   };
 
   const updateTargets = (newTargets) => {
-    setTargetsState(prev => ({ ...prev, ...newTargets }));
+    setTargetsState(prev => {
+      const updated = { ...prev, ...newTargets };
+      syncToCloud(null, null, updated);
+      return updated;
+    });
     showToast(`Nutrition targets updated`, 'success');
   };
 
-  // Data Reset & Backup
+  // Change Cloud Sync Code
+  const updateSyncCode = (newCode) => {
+    const cleanCode = newCode.toLowerCase().trim();
+    if (!cleanCode) return;
+    setSyncCode(cleanCode);
+    showToast(`Cloud Sync Code updated to "${cleanCode}"!`, 'success');
+  };
+
   const handleExport = () => {
     exportAllData();
     showToast(`Data exported as JSON file`, 'success');
@@ -382,12 +473,18 @@ export function BulkTrackProvider({ children }) {
   const handleImport = (jsonData) => {
     try {
       importAllData(jsonData);
-      setProfileState(loadProfile());
-      setTargetsState(loadTargets());
-      setFoodsState(loadFoods());
-      setMealTemplatesState(loadMealTemplates());
-      setDailyLogsState(loadDailyLogs());
-      showToast(`Data restored successfully!`, 'success');
+      const p = loadProfile();
+      const t = loadTargets();
+      const f = loadFoods();
+      const m = loadMealTemplates();
+      const d = loadDailyLogs();
+      setProfileState(p);
+      setTargetsState(t);
+      setFoodsState(f);
+      setMealTemplatesState(m);
+      setDailyLogsState(d);
+      syncToCloud(d, p, t, f, m);
+      showToast(`Data restored successfully & synced!`, 'success');
     } catch (e) {
       showToast(`Error restoring backup: ${e.message}`, 'warning');
     }
@@ -395,11 +492,17 @@ export function BulkTrackProvider({ children }) {
 
   const handleReset = () => {
     resetAllData();
-    setProfileState(loadProfile());
-    setTargetsState(loadTargets());
-    setFoodsState(loadFoods());
-    setMealTemplatesState(loadMealTemplates());
-    setDailyLogsState(loadDailyLogs());
+    const p = loadProfile();
+    const t = loadTargets();
+    const f = loadFoods();
+    const m = loadMealTemplates();
+    const d = loadDailyLogs();
+    setProfileState(p);
+    setTargetsState(t);
+    setFoodsState(f);
+    setMealTemplatesState(m);
+    setDailyLogsState(d);
+    syncToCloud(d, p, t, f, m);
     showToast(`All data reset to initial defaults`, 'info');
   };
 
@@ -436,6 +539,11 @@ export function BulkTrackProvider({ children }) {
     logWorkout,
     undoWorkout,
     logWeight,
+    syncCode,
+    updateSyncCode,
+    isCloudConnected,
+    lastSyncTime,
+    syncToCloud,
     handleExport,
     handleImport,
     handleReset,

@@ -1,6 +1,6 @@
 // src/pages/SettingsPage.jsx
 import React, { useState } from 'react';
-import { Settings, User, Target, Database, Download, Upload, RefreshCw, Save, AlertTriangle } from 'lucide-react';
+import { Settings, User, Target, Database, Download, Upload, RefreshCw, Save, AlertTriangle, Cloud, CloudCheck, Wifi, Key } from 'lucide-react';
 import { useBulkTrack } from '../context/BulkTrackContext';
 
 export default function SettingsPage() {
@@ -9,6 +9,11 @@ export default function SettingsPage() {
     updateProfile,
     targets,
     updateTargets,
+    syncCode,
+    updateSyncCode,
+    isCloudConnected,
+    lastSyncTime,
+    syncToCloud,
     handleExport,
     handleImport,
     handleReset
@@ -16,6 +21,7 @@ export default function SettingsPage() {
 
   const [profileForm, setProfileForm] = useState({ ...profile });
   const [targetForm, setTargetForm] = useState({ ...targets });
+  const [syncCodeInput, setSyncCodeInput] = useState(syncCode);
   const [showResetConfirm, setShowResetConfirm] = useState(false);
 
   const handleProfileSubmit = (e) => {
@@ -26,6 +32,11 @@ export default function SettingsPage() {
   const handleTargetSubmit = (e) => {
     e.preventDefault();
     updateTargets(targetForm);
+  };
+
+  const handleSyncCodeSubmit = (e) => {
+    e.preventDefault();
+    updateSyncCode(syncCodeInput);
   };
 
   const handleFileUpload = (e) => {
@@ -54,11 +65,65 @@ export default function SettingsPage() {
           <span>Application Settings & Profile</span>
         </h2>
         <p className="text-xs text-slate-400 font-medium mt-1">
-          Customize your profile, daily bulking calorie and macro targets, and export/import backup data.
+          Customize your profile, daily bulking calorie and macro targets, real-time cloud sync, and backup options.
         </p>
       </div>
 
-      {/* 1. Profile Settings Card */}
+      {/* 1. Real-time Cloud Sync Panel */}
+      <div className="glass-panel p-6 rounded-2xl border border-emerald-500/30 space-y-4 bg-gradient-to-r from-slate-900 via-slate-900 to-emerald-950/30">
+        <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+          <div className="flex items-center gap-2">
+            <Cloud className="w-5 h-5 text-emerald-400" />
+            <h3 className="text-sm font-extrabold text-white uppercase tracking-wider">Multi-Device Real-Time Cloud Sync</h3>
+          </div>
+
+          <div className="flex items-center gap-2">
+            {isCloudConnected ? (
+              <span className="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1 rounded-full bg-emerald-950 text-emerald-300 border border-emerald-500/30">
+                <Wifi className="w-3.5 h-3.5 text-emerald-400 animate-pulse" /> Cloud Connected
+              </span>
+            ) : (
+              <span className="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1 rounded-full bg-slate-800 text-slate-400">
+                Local Mode
+              </span>
+            )}
+          </div>
+        </div>
+
+        <p className="text-xs text-slate-300 leading-relaxed">
+          Enter the same <strong>Sync Code</strong> on your Phone and Laptop. Any meal, workout, or weight logged on one device will automatically sync to all devices in real-time!
+        </p>
+
+        <form onSubmit={handleSyncCodeSubmit} className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-1">
+          <div className="relative flex-1">
+            <Key className="w-4 h-4 text-slate-500 absolute left-3.5 top-3" />
+            <input
+              type="text"
+              required
+              value={syncCodeInput}
+              onChange={(e) => setSyncCodeInput(e.target.value)}
+              placeholder="e.g. bharath-bulking-70kg"
+              className="w-full pl-10 pr-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white text-sm font-mono font-bold focus:outline-none focus:border-emerald-500"
+            />
+          </div>
+
+          <button
+            type="submit"
+            className="px-5 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs uppercase tracking-wider rounded-xl transition shadow flex items-center justify-center gap-1.5"
+          >
+            <CloudCheck className="w-4 h-4" />
+            <span>Connect & Link Devices</span>
+          </button>
+        </form>
+
+        {lastSyncTime && (
+          <div className="text-[11px] text-slate-400 font-mono pt-1">
+            Last Cloud Sync: {lastSyncTime} • Sharing code: <strong className="text-emerald-400">{syncCode}</strong>
+          </div>
+        )}
+      </div>
+
+      {/* 2. Profile Settings Card */}
       <form onSubmit={handleProfileSubmit} className="glass-panel p-6 rounded-2xl border border-slate-800 space-y-4">
         <div className="flex items-center gap-2 border-b border-slate-800 pb-3">
           <User className="w-5 h-5 text-emerald-400" />
@@ -141,7 +206,7 @@ export default function SettingsPage() {
         </div>
       </form>
 
-      {/* 2. Daily Nutrition Targets Card */}
+      {/* 3. Daily Nutrition Targets Card */}
       <form onSubmit={handleTargetSubmit} className="glass-panel p-6 rounded-2xl border border-slate-800 space-y-4">
         <div className="flex items-center gap-2 border-b border-slate-800 pb-3">
           <Target className="w-5 h-5 text-cyan-400" />
@@ -211,15 +276,15 @@ export default function SettingsPage() {
         </div>
       </form>
 
-      {/* 3. Data Backup, Export & Reset */}
+      {/* 4. Data Backup, Export & Reset */}
       <div className="glass-panel p-6 rounded-2xl border border-slate-800 space-y-4">
         <div className="flex items-center gap-2 border-b border-slate-800 pb-3">
           <Database className="w-5 h-5 text-purple-400" />
-          <h3 className="text-sm font-extrabold text-white uppercase tracking-wider">Data Persistence & Backup</h3>
+          <h3 className="text-sm font-extrabold text-white uppercase tracking-wider">Data Persistence & Manual Backup</h3>
         </div>
 
         <p className="text-xs text-slate-400">
-          All data is automatically persisted in your local browser storage. You can export a full JSON backup file or restore from a previously saved JSON file anytime.
+          In addition to cloud sync, you can export a full JSON backup file or restore from a previously saved JSON file anytime.
         </p>
 
         <div className="flex flex-wrap items-center gap-3 pt-2">
