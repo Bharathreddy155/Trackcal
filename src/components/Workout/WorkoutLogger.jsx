@@ -9,7 +9,7 @@ export default function WorkoutLogger({ isOpen, onClose }) {
 
   const existing = currentLog?.workout || {};
 
-  const [name, setName] = useState(existing.name || 'Push Day (Chest & Shoulders)');
+  const [name, setName] = useState(existing.name || 'Chest / Triceps');
   const [durationMinutes, setDurationMinutes] = useState(existing.durationMinutes || 45);
   const [notes, setNotes] = useState(existing.notes || '');
   const [exercises, setExercises] = useState(
@@ -25,10 +25,10 @@ export default function WorkoutLogger({ isOpen, onClose }) {
             ]
           },
           {
-            name: 'Overhead Shoulder Press',
+            name: 'Tricep Rope Pushdowns',
             sets: [
-              { weight: 25, reps: 10 },
-              { weight: 30, reps: 8 }
+              { weight: 20, reps: 12 },
+              { weight: 25, reps: 10 }
             ]
           }
         ]
@@ -93,7 +93,7 @@ export default function WorkoutLogger({ isOpen, onClose }) {
               value={name}
               onChange={(e) => setName(e.target.value)}
               className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-white text-sm focus:outline-none focus:border-emerald-500 font-bold"
-              placeholder="e.g. Push Day, Pull Day, Legs..."
+              placeholder="e.g. Chest/Triceps, Back/Biceps, Legs/Abs..."
             />
           </div>
 
@@ -116,12 +116,16 @@ export default function WorkoutLogger({ isOpen, onClose }) {
         {/* Quick Routine Selector */}
         <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
           <span className="text-[11px] font-bold text-slate-500 uppercase mr-1">Routines:</span>
-          {['Push Day', 'Pull Day', 'Legs Day', 'Upper Body', 'Lower Body'].map((routine) => (
+          {['Chest / Triceps', 'Back / Biceps', 'Legs / Abs', 'Shoulders / Arms'].map((routine) => (
             <button
               key={routine}
               type="button"
               onClick={() => setName(routine)}
-              className="px-2.5 py-1 bg-slate-900 border border-slate-800 text-slate-300 text-xs rounded-lg hover:border-emerald-500/50 transition font-medium whitespace-nowrap"
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition whitespace-nowrap ${
+                name === routine
+                  ? 'bg-emerald-500 text-slate-950 font-black shadow'
+                  : 'bg-slate-900 border border-slate-800 text-slate-300 hover:border-emerald-500/50'
+              }`}
             >
               {routine}
             </button>
