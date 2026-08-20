@@ -138,67 +138,6 @@ export default function DashboardPage() {
       {/* 4. Supplements Tracker */}
       <SupplementBar />
 
-      {/* 5. Today's Workout Quick Card */}
-      <div className="glass-panel p-5 rounded-2xl border border-slate-800 flex flex-col md:flex-row items-center justify-between gap-4">
-        <div className="flex items-center gap-3.5">
-          <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-xl shrink-0 ${
-            workout.completed
-              ? 'bg-emerald-950/80 text-emerald-400 border border-emerald-500/30'
-              : 'bg-slate-800 text-slate-400'
-          }`}>
-            <Dumbbell className="w-6 h-6" />
-          </div>
-
-          <div>
-            <div className="flex items-center gap-2">
-              <h3 className="text-sm font-extrabold text-white uppercase tracking-wider">Today's Workout</h3>
-              {workout.completed ? (
-                <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-emerald-950 text-emerald-300 border border-emerald-500/30">
-                  ✅ Completed
-                </span>
-              ) : (
-                <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-slate-800 text-slate-400">
-                  Not Completed
-                </span>
-              )}
-            </div>
-
-            <p className="text-xs text-slate-400 font-mono mt-0.5">
-              {workout.completed
-                ? `${workout.name || 'Workout'} • ${workout.durationMinutes} mins • ${workout.exercises?.length || 0} exercises`
-                : 'Target: 4 workouts per week for bulking'}
-            </p>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2">
-          {workout.completed ? (
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => setIsWorkoutLoggerOpen(true)}
-                className="px-3.5 py-2 bg-slate-800 text-xs font-bold text-slate-200 rounded-xl hover:bg-slate-700 transition"
-              >
-                Edit Workout
-              </button>
-              <button
-                onClick={undoWorkout}
-                className="px-3 py-2 text-xs font-bold text-slate-500 hover:text-rose-400 transition"
-              >
-                Clear
-              </button>
-            </div>
-          ) : (
-            <button
-              onClick={() => setIsWorkoutLoggerOpen(true)}
-              className="px-4 py-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs uppercase tracking-wider rounded-xl transition shadow flex items-center gap-1.5"
-            >
-              <Plus className="w-4 h-4" />
-              <span>Log Workout</span>
-            </button>
-          )}
-        </div>
-      </div>
-
       {/* 6. Body Weight Tracker */}
       <QuickWeight />
 
