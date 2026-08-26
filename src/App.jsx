@@ -17,7 +17,7 @@ function AppContent() {
   const [activeTab, setActiveTab] = useState('dashboard');
 
   return (
-    <div className="min-h-screen bg-[#0b0f19] text-slate-100 flex flex-col md:flex-row">
+    <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col md:flex-row">
       
       {/* Toast Notification Container */}
       <Toast />

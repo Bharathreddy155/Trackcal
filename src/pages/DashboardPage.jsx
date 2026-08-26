@@ -56,7 +56,7 @@ export default function DashboardPage() {
       {/* 3. Meal Cards Grid */}
       <div className="space-y-4">
         <div className="flex items-center justify-between px-1">
-          <h2 className="text-sm font-extrabold text-white uppercase tracking-wider flex items-center gap-2">
+          <h2 className="text-sm font-extrabold text-slate-800 uppercase tracking-wider flex items-center gap-2">
             <span>🍱 Daily Meals</span>
             <span className="text-xs text-slate-400 font-normal">
               ({dayType === 'chicken' ? `Chicken Day ${chickenQty}g` : 'Non-Chicken Day'})
@@ -138,7 +138,7 @@ export default function DashboardPage() {
       {/* 4. Supplements Tracker */}
       <SupplementBar />
 
-      {/* 6. Body Weight Tracker */}
+      {/* 5. Body Weight Tracker */}
       <QuickWeight />
 
       {/* Modals */}

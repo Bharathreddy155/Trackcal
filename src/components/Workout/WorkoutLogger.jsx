@@ -86,28 +86,28 @@ export default function WorkoutLogger({ isOpen, onClose }) {
         {/* Workout Presets & Name */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
-            <label className="text-xs font-bold text-slate-300 block mb-1">Workout Name</label>
+            <label className="text-xs font-bold text-slate-700 block mb-1">Workout Name</label>
             <input
               type="text"
               required
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-white text-sm focus:outline-none focus:border-emerald-500 font-bold"
-              placeholder="e.g. Chest/Triceps, Back/Biceps, Legs/Abs..."
+              className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-sm focus:outline-none focus:border-indigo-500 focus:bg-white font-bold"
+              placeholder="e.g. Chest / Triceps, Back / Biceps..."
             />
           </div>
 
           <div>
-            <label className="text-xs font-bold text-slate-300 block mb-1">Duration (minutes)</label>
+            <label className="text-xs font-bold text-slate-700 block mb-1">Duration (minutes)</label>
             <div className="relative">
-              <Clock className="w-4 h-4 text-slate-500 absolute left-3 top-2.5" />
+              <Clock className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
               <input
                 type="number"
                 min="10"
                 max="240"
                 value={durationMinutes}
                 onChange={(e) => setDurationMinutes(e.target.value)}
-                className="w-full pl-9 pr-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-white font-mono text-sm focus:outline-none focus:border-emerald-500"
+                className="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-mono text-sm focus:outline-none focus:border-indigo-500 focus:bg-white"
               />
             </div>
           </div>
@@ -123,8 +123,8 @@ export default function WorkoutLogger({ isOpen, onClose }) {
               onClick={() => setName(routine)}
               className={`px-3 py-1.5 rounded-lg text-xs font-bold transition whitespace-nowrap ${
                 name === routine
-                  ? 'bg-emerald-500 text-slate-950 font-black shadow'
-                  : 'bg-slate-900 border border-slate-800 text-slate-300 hover:border-emerald-500/50'
+                  ? 'bg-indigo-600 text-white font-extrabold shadow-sm'
+                  : 'bg-slate-100 border border-slate-200 text-slate-700 hover:border-indigo-300'
               }`}
             >
               {routine}
@@ -135,31 +135,31 @@ export default function WorkoutLogger({ isOpen, onClose }) {
         {/* Exercises & Sets */}
         <div className="space-y-4 pt-2">
           <div className="flex items-center justify-between">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-emerald-400">Exercises ({exercises.length})</h4>
+            <h4 className="text-xs font-bold uppercase tracking-wider text-indigo-600">Exercises ({exercises.length})</h4>
             <button
               type="button"
               onClick={handleAddExercise}
-              className="text-xs font-bold text-cyan-400 hover:underline flex items-center gap-1"
+              className="text-xs font-bold text-indigo-600 hover:underline flex items-center gap-1"
             >
               <Plus className="w-3.5 h-3.5" /> Add Exercise
             </button>
           </div>
 
           {exercises.map((ex, exIdx) => (
-            <div key={exIdx} className="p-4 bg-slate-950 border border-slate-800 rounded-xl space-y-3">
+            <div key={exIdx} className="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-3">
               <div className="flex items-center justify-between">
                 <input
                   type="text"
                   value={ex.name}
                   onChange={(e) => handleExerciseNameChange(exIdx, e.target.value)}
-                  className="bg-transparent text-sm font-bold text-white focus:outline-none border-b border-transparent focus:border-cyan-500 px-1 py-0.5"
+                  className="bg-transparent text-sm font-bold text-slate-900 focus:outline-none border-b border-transparent focus:border-indigo-500 px-1 py-0.5"
                   placeholder="Exercise Name..."
                 />
 
                 <button
                   type="button"
                   onClick={() => handleRemoveExercise(exIdx)}
-                  className="text-slate-500 hover:text-rose-400 text-xs p-1"
+                  className="text-slate-400 hover:text-rose-600 text-xs p-1"
                 >
                   <Trash2 className="w-4 h-4" />
                 </button>
@@ -168,7 +168,7 @@ export default function WorkoutLogger({ isOpen, onClose }) {
               {/* Sets Table */}
               <div className="space-y-1.5 font-mono text-xs">
                 {ex.sets.map((set, setIdx) => (
-                  <div key={setIdx} className="flex items-center justify-between gap-3 p-2 bg-slate-900/70 rounded-lg border border-slate-800/80">
+                  <div key={setIdx} className="flex items-center justify-between gap-3 p-2 bg-white rounded-lg border border-slate-200">
                     <span className="text-slate-500 font-bold w-12">Set {setIdx + 1}</span>
 
                     <div className="flex items-center gap-2">
@@ -179,12 +179,12 @@ export default function WorkoutLogger({ isOpen, onClose }) {
                           min="0"
                           value={set.weight}
                           onChange={(e) => handleSetChange(exIdx, setIdx, 'weight', e.target.value)}
-                          className="w-16 px-2 py-1 bg-slate-950 border border-slate-800 rounded text-white text-center font-bold"
+                          className="w-16 px-2 py-1 bg-slate-50 border border-slate-200 rounded text-slate-900 text-center font-bold"
                         />
-                        <span className="text-slate-500 text-[11px]">kg</span>
+                        <span className="text-slate-400 text-[11px]">kg</span>
                       </div>
 
-                      <span className="text-slate-600">×</span>
+                      <span className="text-slate-300">×</span>
 
                       <div className="flex items-center gap-1">
                         <input
@@ -192,16 +192,16 @@ export default function WorkoutLogger({ isOpen, onClose }) {
                           min="1"
                           value={set.reps}
                           onChange={(e) => handleSetChange(exIdx, setIdx, 'reps', e.target.value)}
-                          className="w-14 px-2 py-1 bg-slate-950 border border-slate-800 rounded text-white text-center font-bold"
+                          className="w-14 px-2 py-1 bg-slate-50 border border-slate-200 rounded text-slate-900 text-center font-bold"
                         />
-                        <span className="text-slate-500 text-[11px]">reps</span>
+                        <span className="text-slate-400 text-[11px]">reps</span>
                       </div>
                     </div>
 
                     <button
                       type="button"
                       onClick={() => handleRemoveSet(exIdx, setIdx)}
-                      className="text-slate-600 hover:text-rose-400 text-xs"
+                      className="text-slate-400 hover:text-rose-500 text-xs"
                     >
                       ✕
                     </button>
@@ -211,7 +211,7 @@ export default function WorkoutLogger({ isOpen, onClose }) {
                 <button
                   type="button"
                   onClick={() => handleAddSet(exIdx)}
-                  className="mt-1 text-[11px] font-bold text-slate-400 hover:text-white px-2 py-1 bg-slate-900 rounded-md border border-slate-800"
+                  className="mt-1 text-[11px] font-bold text-slate-600 hover:text-slate-900 px-2.5 py-1 bg-white rounded-md border border-slate-200 shadow-2xs"
                 >
                   + Add Set
                 </button>
@@ -222,29 +222,29 @@ export default function WorkoutLogger({ isOpen, onClose }) {
 
         {/* Notes */}
         <div>
-          <label className="text-xs font-bold text-slate-300 block mb-1">Session Notes</label>
+          <label className="text-xs font-bold text-slate-700 block mb-1">Session Notes</label>
           <textarea
             rows="2"
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
             placeholder="Felt good on bench press, progressive overload on set 3..."
-            className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-white text-xs focus:outline-none focus:border-emerald-500"
+            className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-xs focus:outline-none focus:border-indigo-500 focus:bg-white"
           />
         </div>
 
         {/* Footer Actions */}
-        <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-800">
+        <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-200">
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2 bg-slate-800 text-slate-300 text-xs font-bold rounded-xl hover:bg-slate-700 transition"
+            className="px-4 py-2 bg-slate-100 text-slate-600 text-xs font-bold rounded-xl hover:bg-slate-200 transition"
           >
             Cancel
           </button>
 
           <button
             type="submit"
-            className="px-5 py-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-black uppercase tracking-wider rounded-xl transition shadow flex items-center gap-1.5"
+            className="px-5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-black uppercase tracking-wider rounded-xl transition shadow-sm flex items-center gap-1.5"
           >
             <CheckCircle2 className="w-4 h-4" />
             <span>Save Workout Session</span>

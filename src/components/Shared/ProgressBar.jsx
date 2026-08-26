@@ -14,7 +14,7 @@ export default function ProgressBar({
 
   return (
     <div className={`w-full ${className}`}>
-      <div className={`w-full bg-slate-800 rounded-full overflow-hidden ${height}`}>
+      <div className={`w-full bg-slate-200 rounded-full overflow-hidden ${height}`}>
         <div
           className={`${height} transition-all duration-500 ease-out rounded-full ${
             isOver ? 'bg-amber-500' : colorClass
@@ -23,7 +23,7 @@ export default function ProgressBar({
         />
       </div>
       {showPercent && (
-        <span className="text-xs text-slate-400 font-mono mt-1 inline-block">
+        <span className="text-xs text-slate-500 font-mono mt-1 inline-block">
           {percentage}%
         </span>
       )}

@@ -60,56 +60,56 @@ export default function SettingsPage() {
       
       {/* Header */}
       <div>
-        <h2 className="text-xl font-extrabold text-white flex items-center gap-2">
-          <Settings className="w-6 h-6 text-slate-400" />
+        <h2 className="text-xl font-extrabold text-slate-900 flex items-center gap-2">
+          <Settings className="w-6 h-6 text-indigo-600" />
           <span>Application Settings & Profile</span>
         </h2>
-        <p className="text-xs text-slate-400 font-medium mt-1">
+        <p className="text-xs text-slate-500 font-medium mt-1">
           Customize your profile, daily bulking calorie and macro targets, real-time cloud sync, and backup options.
         </p>
       </div>
 
       {/* 1. Real-time Cloud Sync Panel */}
-      <div className="glass-panel p-6 rounded-2xl border border-emerald-500/30 space-y-4 bg-gradient-to-r from-slate-900 via-slate-900 to-emerald-950/30">
-        <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+      <div className="glass-panel p-6 rounded-2xl border border-indigo-200 space-y-4 bg-gradient-to-r from-white via-white to-indigo-50/40">
+        <div className="flex items-center justify-between border-b border-slate-200 pb-3">
           <div className="flex items-center gap-2">
-            <Cloud className="w-5 h-5 text-emerald-400" />
-            <h3 className="text-sm font-extrabold text-white uppercase tracking-wider">Multi-Device Real-Time Cloud Sync</h3>
+            <Cloud className="w-5 h-5 text-indigo-600" />
+            <h3 className="text-sm font-extrabold text-slate-900 uppercase tracking-wider">Multi-Device Real-Time Cloud Sync</h3>
           </div>
 
           <div className="flex items-center gap-2">
             {isCloudConnected ? (
-              <span className="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1 rounded-full bg-emerald-950 text-emerald-300 border border-emerald-500/30">
-                <Wifi className="w-3.5 h-3.5 text-emerald-400 animate-pulse" /> Cloud Connected
+              <span className="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+                <Wifi className="w-3.5 h-3.5 text-emerald-600 animate-pulse" /> Cloud Connected
               </span>
             ) : (
-              <span className="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1 rounded-full bg-slate-800 text-slate-400">
+              <span className="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1 rounded-full bg-slate-100 text-slate-500">
                 Local Mode
               </span>
             )}
           </div>
         </div>
 
-        <p className="text-xs text-slate-300 leading-relaxed">
+        <p className="text-xs text-slate-600 leading-relaxed">
           Enter the same <strong>Sync Code</strong> on your Phone and Laptop. Any meal, workout, or weight logged on one device will automatically sync to all devices in real-time!
         </p>
 
         <form onSubmit={handleSyncCodeSubmit} className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-1">
           <div className="relative flex-1">
-            <Key className="w-4 h-4 text-slate-500 absolute left-3.5 top-3" />
+            <Key className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
             <input
               type="text"
               required
               value={syncCodeInput}
               onChange={(e) => setSyncCodeInput(e.target.value)}
               placeholder="e.g. bharath-bulking-70kg"
-              className="w-full pl-10 pr-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white text-sm font-mono font-bold focus:outline-none focus:border-emerald-500"
+              className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-sm font-mono font-bold focus:outline-none focus:border-indigo-500 focus:bg-white"
             />
           </div>
 
           <button
             type="submit"
-            className="px-5 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs uppercase tracking-wider rounded-xl transition shadow flex items-center justify-center gap-1.5"
+            className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-black text-xs uppercase tracking-wider rounded-xl transition shadow-md shadow-indigo-500/20 flex items-center justify-center gap-1.5"
           >
             <CloudCheck className="w-4 h-4" />
             <span>Connect & Link Devices</span>
@@ -117,80 +117,80 @@ export default function SettingsPage() {
         </form>
 
         {lastSyncTime && (
-          <div className="text-[11px] text-slate-400 font-mono pt-1">
-            Last Cloud Sync: {lastSyncTime} • Sharing code: <strong className="text-emerald-400">{syncCode}</strong>
+          <div className="text-[11px] text-slate-500 font-mono pt-1">
+            Last Cloud Sync: {lastSyncTime} • Sharing code: <strong className="text-indigo-600">{syncCode}</strong>
           </div>
         )}
       </div>
 
       {/* 2. Profile Settings Card */}
-      <form onSubmit={handleProfileSubmit} className="glass-panel p-6 rounded-2xl border border-slate-800 space-y-4">
-        <div className="flex items-center gap-2 border-b border-slate-800 pb-3">
-          <User className="w-5 h-5 text-emerald-400" />
-          <h3 className="text-sm font-extrabold text-white uppercase tracking-wider">User Profile</h3>
+      <form onSubmit={handleProfileSubmit} className="glass-panel p-6 rounded-2xl border border-slate-200 space-y-4">
+        <div className="flex items-center gap-2 border-b border-slate-200 pb-3">
+          <User className="w-5 h-5 text-indigo-600" />
+          <h3 className="text-sm font-extrabold text-slate-900 uppercase tracking-wider">User Profile</h3>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
           <div>
-            <label className="text-xs font-bold text-slate-300 block mb-1">Name</label>
+            <label className="text-xs font-bold text-slate-700 block mb-1">Name</label>
             <input
               type="text"
               value={profileForm.name}
               onChange={(e) => setProfileForm({ ...profileForm, name: e.target.value })}
-              className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-white text-sm focus:outline-none focus:border-emerald-500 font-bold"
+              className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-sm focus:outline-none focus:border-indigo-500 focus:bg-white font-bold"
             />
           </div>
 
           <div>
-            <label className="text-xs font-bold text-slate-300 block mb-1">Age</label>
+            <label className="text-xs font-bold text-slate-700 block mb-1">Age</label>
             <input
               type="number"
               value={profileForm.age}
               onChange={(e) => setProfileForm({ ...profileForm, age: Number(e.target.value) })}
-              className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-white font-mono text-sm focus:outline-none focus:border-emerald-500"
+              className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-mono text-sm focus:outline-none focus:border-indigo-500 focus:bg-white"
             />
           </div>
 
           <div>
-            <label className="text-xs font-bold text-slate-300 block mb-1">Height (cm)</label>
+            <label className="text-xs font-bold text-slate-700 block mb-1">Height (cm)</label>
             <input
               type="number"
               value={profileForm.heightCm}
               onChange={(e) => setProfileForm({ ...profileForm, heightCm: Number(e.target.value) })}
-              className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-white font-mono text-sm focus:outline-none focus:border-emerald-500"
+              className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-mono text-sm focus:outline-none focus:border-indigo-500 focus:bg-white"
             />
           </div>
 
           <div>
-            <label className="text-xs font-bold text-slate-300 block mb-1">Current Weight (kg)</label>
+            <label className="text-xs font-bold text-slate-700 block mb-1">Current Weight (kg)</label>
             <input
               type="number"
               step="0.1"
               value={profileForm.currentWeightKg}
               onChange={(e) => setProfileForm({ ...profileForm, currentWeightKg: Number(e.target.value) })}
-              className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-white font-mono text-sm focus:outline-none focus:border-emerald-500"
+              className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-mono text-sm focus:outline-none focus:border-indigo-500 focus:bg-white"
             />
           </div>
 
           <div>
-            <label className="text-xs font-bold text-slate-300 block mb-1">Goal Weight (kg)</label>
+            <label className="text-xs font-bold text-slate-700 block mb-1">Goal Weight (kg)</label>
             <input
               type="number"
               step="0.1"
               value={profileForm.goalWeightKg}
               onChange={(e) => setProfileForm({ ...profileForm, goalWeightKg: Number(e.target.value) })}
-              className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-emerald-400 font-mono text-sm font-bold focus:outline-none focus:border-emerald-500"
+              className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-emerald-600 font-mono text-sm font-bold focus:outline-none focus:border-indigo-500 focus:bg-white"
             />
           </div>
 
           <div>
-            <label className="text-xs font-bold text-slate-300 block mb-1">Body Fat %</label>
+            <label className="text-xs font-bold text-slate-700 block mb-1">Body Fat %</label>
             <input
               type="number"
               step="0.1"
               value={profileForm.bodyFatPercentage}
               onChange={(e) => setProfileForm({ ...profileForm, bodyFatPercentage: Number(e.target.value) })}
-              className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-white font-mono text-sm focus:outline-none focus:border-emerald-500"
+              className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-mono text-sm focus:outline-none focus:border-indigo-500 focus:bg-white"
             />
           </div>
         </div>
@@ -198,7 +198,7 @@ export default function SettingsPage() {
         <div className="flex justify-end pt-2">
           <button
             type="submit"
-            className="px-5 py-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs uppercase tracking-wider rounded-xl transition shadow flex items-center gap-1.5"
+            className="px-5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-black text-xs uppercase tracking-wider rounded-xl transition shadow-md shadow-indigo-500/20 flex items-center gap-1.5"
           >
             <Save className="w-4 h-4" />
             <span>Save Profile</span>
@@ -207,60 +207,60 @@ export default function SettingsPage() {
       </form>
 
       {/* 3. Daily Nutrition Targets Card */}
-      <form onSubmit={handleTargetSubmit} className="glass-panel p-6 rounded-2xl border border-slate-800 space-y-4">
-        <div className="flex items-center gap-2 border-b border-slate-800 pb-3">
-          <Target className="w-5 h-5 text-cyan-400" />
-          <h3 className="text-sm font-extrabold text-white uppercase tracking-wider">Daily Nutrition Targets</h3>
+      <form onSubmit={handleTargetSubmit} className="glass-panel p-6 rounded-2xl border border-slate-200 space-y-4">
+        <div className="flex items-center gap-2 border-b border-slate-200 pb-3">
+          <Target className="w-5 h-5 text-indigo-600" />
+          <h3 className="text-sm font-extrabold text-slate-900 uppercase tracking-wider">Daily Nutrition Targets</h3>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
           <div>
-            <label className="text-xs font-bold text-slate-300 block mb-1">Calories (kcal)</label>
+            <label className="text-xs font-bold text-slate-700 block mb-1">Calories (kcal)</label>
             <input
               type="number"
               value={targetForm.calories}
               onChange={(e) => setTargetForm({ ...targetForm, calories: Number(e.target.value) })}
-              className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-white font-mono text-sm font-bold focus:outline-none focus:border-cyan-500"
+              className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-mono text-sm font-bold focus:outline-none focus:border-indigo-500 focus:bg-white"
             />
           </div>
 
           <div>
-            <label className="text-xs font-bold text-slate-300 block mb-1">Protein (g)</label>
+            <label className="text-xs font-bold text-slate-700 block mb-1">Protein (g)</label>
             <input
               type="number"
               value={targetForm.protein}
               onChange={(e) => setTargetForm({ ...targetForm, protein: Number(e.target.value) })}
-              className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-emerald-400 font-mono text-sm font-bold focus:outline-none focus:border-cyan-500"
+              className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-emerald-600 font-mono text-sm font-bold focus:outline-none focus:border-indigo-500 focus:bg-white"
             />
           </div>
 
           <div>
-            <label className="text-xs font-bold text-slate-300 block mb-1">Carbohydrates (g)</label>
+            <label className="text-xs font-bold text-slate-700 block mb-1">Carbohydrates (g)</label>
             <input
               type="number"
               value={targetForm.carbs}
               onChange={(e) => setTargetForm({ ...targetForm, carbs: Number(e.target.value) })}
-              className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-cyan-400 font-mono text-sm font-bold focus:outline-none focus:border-cyan-500"
+              className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-cyan-600 font-mono text-sm font-bold focus:outline-none focus:border-indigo-500 focus:bg-white"
             />
           </div>
 
           <div>
-            <label className="text-xs font-bold text-slate-300 block mb-1">Fat (g)</label>
+            <label className="text-xs font-bold text-slate-700 block mb-1">Fat (g)</label>
             <input
               type="number"
               value={targetForm.fat}
               onChange={(e) => setTargetForm({ ...targetForm, fat: Number(e.target.value) })}
-              className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-amber-400 font-mono text-sm font-bold focus:outline-none focus:border-cyan-500"
+              className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-amber-600 font-mono text-sm font-bold focus:outline-none focus:border-indigo-500 focus:bg-white"
             />
           </div>
 
           <div>
-            <label className="text-xs font-bold text-slate-300 block mb-1">Fiber (g)</label>
+            <label className="text-xs font-bold text-slate-700 block mb-1">Fiber (g)</label>
             <input
               type="number"
               value={targetForm.fiber}
               onChange={(e) => setTargetForm({ ...targetForm, fiber: Number(e.target.value) })}
-              className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-violet-400 font-mono text-sm font-bold focus:outline-none focus:border-cyan-500"
+              className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-violet-600 font-mono text-sm font-bold focus:outline-none focus:border-indigo-500 focus:bg-white"
             />
           </div>
         </div>
@@ -268,7 +268,7 @@ export default function SettingsPage() {
         <div className="flex justify-end pt-2">
           <button
             type="submit"
-            className="px-5 py-2 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-black text-xs uppercase tracking-wider rounded-xl transition shadow flex items-center gap-1.5"
+            className="px-5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-black text-xs uppercase tracking-wider rounded-xl transition shadow-md shadow-indigo-500/20 flex items-center gap-1.5"
           >
             <Save className="w-4 h-4" />
             <span>Save Nutrition Targets</span>
@@ -277,26 +277,26 @@ export default function SettingsPage() {
       </form>
 
       {/* 4. Data Backup, Export & Reset */}
-      <div className="glass-panel p-6 rounded-2xl border border-slate-800 space-y-4">
-        <div className="flex items-center gap-2 border-b border-slate-800 pb-3">
-          <Database className="w-5 h-5 text-purple-400" />
-          <h3 className="text-sm font-extrabold text-white uppercase tracking-wider">Data Persistence & Manual Backup</h3>
+      <div className="glass-panel p-6 rounded-2xl border border-slate-200 space-y-4">
+        <div className="flex items-center gap-2 border-b border-slate-200 pb-3">
+          <Database className="w-5 h-5 text-indigo-600" />
+          <h3 className="text-sm font-extrabold text-slate-900 uppercase tracking-wider">Data Persistence & Manual Backup</h3>
         </div>
 
-        <p className="text-xs text-slate-400">
+        <p className="text-xs text-slate-500">
           In addition to cloud sync, you can export a full JSON backup file or restore from a previously saved JSON file anytime.
         </p>
 
         <div className="flex flex-wrap items-center gap-3 pt-2">
           <button
             onClick={handleExport}
-            className="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-emerald-400 text-xs font-bold rounded-xl transition flex items-center gap-2"
+            className="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-emerald-700 text-xs font-bold rounded-xl transition flex items-center gap-2 border border-slate-200"
           >
             <Download className="w-4 h-4" />
             <span>Export Data (JSON)</span>
           </button>
 
-          <label className="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-cyan-400 text-xs font-bold rounded-xl transition cursor-pointer flex items-center gap-2">
+          <label className="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-indigo-700 text-xs font-bold rounded-xl transition cursor-pointer flex items-center gap-2 border border-slate-200">
             <Upload className="w-4 h-4" />
             <span>Import Backup (JSON)</span>
             <input type="file" accept=".json" onChange={handleFileUpload} className="hidden" />
@@ -304,7 +304,7 @@ export default function SettingsPage() {
 
           <button
             onClick={() => setShowResetConfirm(true)}
-            className="px-4 py-2.5 bg-slate-900 border border-rose-500/30 text-rose-400 hover:bg-rose-950/40 text-xs font-bold rounded-xl transition flex items-center gap-2 ml-auto"
+            className="px-4 py-2.5 bg-rose-50 border border-rose-200 text-rose-700 hover:bg-rose-100 text-xs font-bold rounded-xl transition flex items-center gap-2 ml-auto"
           >
             <RefreshCw className="w-4 h-4" />
             <span>Reset All Data</span>
@@ -313,15 +313,15 @@ export default function SettingsPage() {
 
         {/* Reset Confirmation Box */}
         {showResetConfirm && (
-          <div className="p-4 bg-rose-950/60 border border-rose-500/50 rounded-xl space-y-3 animate-fade-in">
-            <div className="flex items-center gap-2 text-xs font-bold text-rose-300">
-              <AlertTriangle className="w-4 h-4 text-rose-400" />
+          <div className="p-4 bg-rose-50 border border-rose-200 rounded-xl space-y-3 animate-fade-in">
+            <div className="flex items-center gap-2 text-xs font-bold text-rose-800">
+              <AlertTriangle className="w-4 h-4 text-rose-600" />
               <span>Are you sure you want to delete all saved meal logs, custom foods, workouts, and settings?</span>
             </div>
             <div className="flex items-center gap-2 justify-end">
               <button
                 onClick={() => setShowResetConfirm(false)}
-                className="px-3 py-1.5 bg-slate-800 text-xs font-bold text-slate-300 rounded-lg hover:bg-slate-700"
+                className="px-3 py-1.5 bg-white text-xs font-bold text-slate-700 rounded-lg hover:bg-slate-100 border border-slate-200"
               >
                 Cancel
               </button>
@@ -330,7 +330,7 @@ export default function SettingsPage() {
                   handleReset();
                   setShowResetConfirm(false);
                 }}
-                className="px-4 py-1.5 bg-rose-600 text-xs font-black text-white rounded-lg hover:bg-rose-500 shadow"
+                className="px-4 py-1.5 bg-rose-600 text-xs font-black text-white rounded-lg hover:bg-rose-700 shadow-sm"
               >
                 Yes, Reset Everything
               </button>

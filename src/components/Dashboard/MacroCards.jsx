@@ -12,8 +12,8 @@ export default function MacroCards({ consumed = {}, targets = {} }) {
       target: targets.protein || 105,
       unit: 'g',
       color: 'bg-emerald-500',
-      badgeColor: 'text-emerald-400 border-emerald-500/30 bg-emerald-950/40',
-      borderHover: 'hover:border-emerald-500/40'
+      badgeColor: 'text-emerald-700 border-emerald-200 bg-emerald-50',
+      borderHover: 'hover:border-emerald-300'
     },
     {
       id: 'carbs',
@@ -23,8 +23,8 @@ export default function MacroCards({ consumed = {}, targets = {} }) {
       target: targets.carbs || 395,
       unit: 'g',
       color: 'bg-cyan-500',
-      badgeColor: 'text-cyan-400 border-cyan-500/30 bg-cyan-950/40',
-      borderHover: 'hover:border-cyan-500/40'
+      badgeColor: 'text-cyan-700 border-cyan-200 bg-cyan-50',
+      borderHover: 'hover:border-cyan-300'
     },
     {
       id: 'fat',
@@ -34,8 +34,8 @@ export default function MacroCards({ consumed = {}, targets = {} }) {
       target: targets.fat || 77,
       unit: 'g',
       color: 'bg-amber-500',
-      badgeColor: 'text-amber-400 border-amber-500/30 bg-amber-950/40',
-      borderHover: 'hover:border-amber-500/40'
+      badgeColor: 'text-amber-700 border-amber-200 bg-amber-50',
+      borderHover: 'hover:border-amber-300'
     },
     {
       id: 'fiber',
@@ -45,8 +45,8 @@ export default function MacroCards({ consumed = {}, targets = {} }) {
       target: targets.fiber || 33,
       unit: 'g',
       color: 'bg-violet-500',
-      badgeColor: 'text-violet-400 border-violet-500/30 bg-violet-950/40',
-      borderHover: 'hover:border-violet-500/40'
+      badgeColor: 'text-violet-700 border-violet-200 bg-violet-50',
+      borderHover: 'hover:border-violet-300'
     }
   ];
 
@@ -64,14 +64,14 @@ export default function MacroCards({ consumed = {}, targets = {} }) {
         return (
           <div
             key={m.id}
-            className={`glass-panel p-4 rounded-2xl border border-slate-800 transition-all ${m.borderHover} flex flex-col justify-between`}
+            className={`glass-panel p-4 rounded-2xl border border-slate-200 transition-all ${m.borderHover} flex flex-col justify-between`}
           >
             <div>
               {/* Header Icon + Label */}
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
                   <span className="text-base">{m.icon}</span>
-                  <span className="text-xs font-bold text-slate-300 uppercase tracking-wider">{m.label}</span>
+                  <span className="text-xs font-bold text-slate-600 uppercase tracking-wider">{m.label}</span>
                 </div>
                 <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${m.badgeColor}`}>
                   {statusText}
@@ -80,12 +80,12 @@ export default function MacroCards({ consumed = {}, targets = {} }) {
 
               {/* Values */}
               <div className="flex items-baseline justify-between mt-2">
-                <div className="text-xl font-black text-white font-mono">
+                <div className="text-xl font-black text-slate-900 font-mono">
                   {m.consumed} <span className="text-xs text-slate-400 font-normal">/ {m.target} {m.unit}</span>
                 </div>
               </div>
 
-              <div className="text-xs text-slate-400 mt-1 font-mono">
+              <div className="text-xs text-slate-500 mt-1 font-mono">
                 {remaining > 0 ? `${remaining.toFixed(1)} ${m.unit} remaining` : 'Target met 🎉'}
               </div>
             </div>
