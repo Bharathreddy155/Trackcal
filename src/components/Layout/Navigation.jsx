@@ -8,15 +8,10 @@ import {
   Settings, 
   Pill, 
   BarChart2, 
-  Zap,
-  Moon,
-  Sun
+  Zap
 } from 'lucide-react';
-import { useBulkTrack } from '../../context/BulkTrackContext';
 
 export default function Navigation({ activeTab, setActiveTab }) {
-  const { theme, toggleTheme } = useBulkTrack();
-
   const navItems = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { id: 'meals', label: 'Meals', icon: UtensilsCrossed },
@@ -34,14 +29,13 @@ export default function Navigation({ activeTab, setActiveTab }) {
     <>
       {/* Desktop Sidebar Navigation */}
       <aside className="hidden md:flex flex-col w-64 border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shrink-0 fixed inset-y-0 left-0 z-30 shadow-sm transition-colors duration-200">
-        {/* Brand Header */}
+        {/* Brand Header without 70kg Goal */}
         <div className="flex items-center gap-3 px-2 py-3 mb-6">
           <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-500 to-emerald-500 flex items-center justify-center text-white font-black shadow-lg shadow-indigo-500/20">
             <Zap className="w-6 h-6 fill-white" />
           </div>
           <div>
             <h1 className="text-xl font-extrabold tracking-tight text-slate-900 dark:text-white">BulkTrack</h1>
-            <span className="text-xs font-semibold text-indigo-600 dark:text-indigo-400 uppercase tracking-widest">70kg Goal</span>
           </div>
         </div>
 
@@ -88,21 +82,8 @@ export default function Navigation({ activeTab, setActiveTab }) {
           })}
         </nav>
 
-        {/* Bottom Theme & Target Info */}
-        <div className="mt-auto space-y-3 pt-3">
-          {/* Quick Theme Toggle */}
-          <button
-            onClick={toggleTheme}
-            className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/60 text-slate-700 dark:text-slate-300 text-xs font-bold transition hover:bg-slate-100 dark:hover:bg-slate-800"
-          >
-            <span className="flex items-center gap-2">
-              {theme === 'dark' ? <Moon className="w-4 h-4 text-indigo-400" /> : <Sun className="w-4 h-4 text-amber-500" />}
-              <span>{theme === 'dark' ? 'Night Mode' : 'Normal Mode'}</span>
-            </span>
-            <span className="text-[10px] text-slate-400 uppercase tracking-wider font-mono">Toggle</span>
-          </button>
-
-          {/* Target Card */}
+        {/* Bottom Target Card (Theme toggle removed as requested) */}
+        <div className="mt-auto pt-3">
           <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800">
             <div className="text-xs text-slate-500 dark:text-slate-400 font-medium">Bulking Target</div>
             <div className="text-sm font-bold text-slate-800 dark:text-slate-200 mt-0.5">2,725 kcal • 105g P</div>
