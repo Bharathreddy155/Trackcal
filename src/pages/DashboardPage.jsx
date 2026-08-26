@@ -13,7 +13,6 @@ import WorkoutLogger from '../components/Workout/WorkoutLogger';
 
 import { useBulkTrack } from '../context/BulkTrackContext';
 import { calculateDailyTotals } from '../services/nutritionEngine';
-import { Dumbbell, Plus, CheckCircle2 } from 'lucide-react';
 
 export default function DashboardPage() {
   const {
@@ -23,7 +22,6 @@ export default function DashboardPage() {
     mealTemplates,
     logMeal,
     undoMeal,
-    undoWorkout
   } = useBulkTrack();
 
   const [detailMealType, setDetailMealType] = useState(null);
@@ -36,8 +34,6 @@ export default function DashboardPage() {
   const chickenQty = currentLog?.chickenQuantity || 175;
   const curryQtyLunch = currentLog?.curryQuantityLunch || 60;
   const curryQtyDinner = currentLog?.curryQuantityDinner || 60;
-
-  const workout = currentLog?.workout || {};
 
   return (
     <div className="space-y-6 pb-12 animate-fade-in">
@@ -56,9 +52,9 @@ export default function DashboardPage() {
       {/* 3. Meal Cards Grid */}
       <div className="space-y-4">
         <div className="flex items-center justify-between px-1">
-          <h2 className="text-sm font-extrabold text-slate-800 uppercase tracking-wider flex items-center gap-2">
+          <h2 className="text-sm font-extrabold text-slate-800 dark:text-white uppercase tracking-wider flex items-center gap-2">
             <span>🍱 Daily Meals</span>
-            <span className="text-xs text-slate-400 font-normal">
+            <span className="text-xs text-slate-400 dark:text-slate-500 font-normal">
               ({dayType === 'chicken' ? `Chicken Day ${chickenQty}g` : 'Non-Chicken Day'})
             </span>
           </h2>

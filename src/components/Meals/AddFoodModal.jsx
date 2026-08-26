@@ -57,7 +57,7 @@ export default function AddFoodModal({ isOpen, onClose, targetMealType, onOpenCu
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search food name or brand..."
-            className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-sm focus:outline-none focus:border-indigo-500 focus:bg-white"
+            className="w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-900 dark:text-white text-sm focus:outline-none focus:border-indigo-500 focus:bg-white dark:focus:bg-slate-900"
           />
         </div>
 
@@ -75,7 +75,7 @@ export default function AddFoodModal({ isOpen, onClose, targetMealType, onOpenCu
               className={`px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition ${
                 activeTab === t.id
                   ? 'bg-indigo-600 text-white font-extrabold shadow-sm'
-                  : 'bg-slate-100 text-slate-600 hover:text-slate-900 hover:bg-slate-200'
+                  : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-700'
               }`}
             >
               {t.label}
@@ -86,7 +86,7 @@ export default function AddFoodModal({ isOpen, onClose, targetMealType, onOpenCu
         {/* Food List Container */}
         <div className="max-h-56 overflow-y-auto space-y-1.5 pr-1">
           {filteredFoods.length === 0 ? (
-            <div className="text-center py-6 text-slate-400 text-xs">
+            <div className="text-center py-6 text-slate-400 dark:text-slate-500 text-xs">
               No matching foods found. Create a custom food below!
             </div>
           ) : (
@@ -98,16 +98,16 @@ export default function AddFoodModal({ isOpen, onClose, targetMealType, onOpenCu
                   onClick={() => handleSelectFood(food)}
                   className={`p-3 rounded-xl border cursor-pointer transition flex items-center justify-between ${
                     isSelected
-                      ? 'bg-indigo-50 border-indigo-300 text-slate-900 shadow-sm'
-                      : 'bg-white border-slate-200 hover:border-slate-300 text-slate-700'
+                      ? 'bg-indigo-50 dark:bg-indigo-950/60 border-indigo-300 dark:border-indigo-500 text-slate-900 dark:text-white shadow-sm'
+                      : 'bg-white dark:bg-slate-900/60 border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 text-slate-700 dark:text-slate-300'
                   }`}
                 >
                   <div>
-                    <div className="font-bold text-sm text-slate-900 flex items-center gap-2">
+                    <div className="font-bold text-sm text-slate-900 dark:text-white flex items-center gap-2">
                       <span>{food.name}</span>
-                      {food.brand && <span className="text-xs text-slate-400 font-normal">({food.brand})</span>}
+                      {food.brand && <span className="text-xs text-slate-400 dark:text-slate-500 font-normal">({food.brand})</span>}
                     </div>
-                    <div className="text-xs text-slate-500 font-mono mt-0.5">
+                    <div className="text-xs text-slate-500 dark:text-slate-400 font-mono mt-0.5">
                       Per {food.servingSize} {food.servingUnit}: {food.calories} kcal • {food.protein}g P • {food.carbs}g C • {food.fat}g F
                     </div>
                   </div>
@@ -130,31 +130,31 @@ export default function AddFoodModal({ isOpen, onClose, targetMealType, onOpenCu
 
         {/* Selected Food Quantity & Macro Preview Panel */}
         {selectedFood && (
-          <div className="p-4 bg-slate-50 border border-indigo-200 rounded-xl space-y-3 animate-fade-in">
-            <div className="flex items-center justify-between border-b border-slate-200 pb-2">
-              <span className="text-xs font-bold uppercase text-indigo-600 tracking-wider">Configure Serving</span>
-              <span className="text-xs font-mono font-bold text-slate-900">{selectedFood.name}</span>
+          <div className="p-4 bg-slate-50 dark:bg-slate-950 border border-indigo-200 dark:border-indigo-800/60 rounded-xl space-y-3 animate-fade-in">
+            <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-2">
+              <span className="text-xs font-bold uppercase text-indigo-600 dark:text-indigo-400 tracking-wider">Configure Serving</span>
+              <span className="text-xs font-mono font-bold text-slate-900 dark:text-white">{selectedFood.name}</span>
             </div>
 
             <div className="flex items-center gap-3">
               <div className="flex-1">
-                <label className="text-[11px] text-slate-500 block mb-1 font-medium">Quantity</label>
+                <label className="text-[11px] text-slate-500 dark:text-slate-400 block mb-1 font-medium">Quantity</label>
                 <input
                   type="number"
                   step="1"
                   min="0.1"
                   value={quantity}
                   onChange={(e) => setQuantity(Number(e.target.value))}
-                  className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-slate-900 font-mono text-sm font-bold focus:outline-none focus:border-indigo-500"
+                  className="w-full px-3 py-1.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg text-slate-900 dark:text-white font-mono text-sm font-bold focus:outline-none focus:border-indigo-500"
                 />
               </div>
 
               <div className="w-28">
-                <label className="text-[11px] text-slate-500 block mb-1 font-medium">Unit</label>
+                <label className="text-[11px] text-slate-500 dark:text-slate-400 block mb-1 font-medium">Unit</label>
                 <select
                   value={unit}
                   onChange={(e) => setUnit(e.target.value)}
-                  className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-slate-800 text-xs font-mono font-bold focus:outline-none focus:border-indigo-500"
+                  className="w-full px-3 py-1.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg text-slate-800 dark:text-slate-200 text-xs font-mono font-bold focus:outline-none focus:border-indigo-500"
                 >
                   <option value="g">g</option>
                   <option value="ml">ml</option>
@@ -167,41 +167,41 @@ export default function AddFoodModal({ isOpen, onClose, targetMealType, onOpenCu
             </div>
 
             {/* Macro Calculation Live Result */}
-            <div className="grid grid-cols-5 gap-1 text-center p-2 bg-white rounded-lg text-xs font-mono border border-slate-200">
+            <div className="grid grid-cols-5 gap-1 text-center p-2 bg-white dark:bg-slate-900 rounded-lg text-xs font-mono border border-slate-200 dark:border-slate-800">
               <div>
-                <span className="text-[10px] text-slate-400 block font-sans">Calories</span>
-                <span className="font-bold text-slate-900">{previewNutrition.calories}</span>
+                <span className="text-[10px] text-slate-400 dark:text-slate-500 block font-sans">Calories</span>
+                <span className="font-bold text-slate-900 dark:text-white">{previewNutrition.calories}</span>
               </div>
               <div>
-                <span className="text-[10px] text-slate-400 block font-sans">Protein</span>
-                <span className="font-bold text-emerald-600">{previewNutrition.protein}g</span>
+                <span className="text-[10px] text-slate-400 dark:text-slate-500 block font-sans">Protein</span>
+                <span className="font-bold text-emerald-600 dark:text-emerald-400">{previewNutrition.protein}g</span>
               </div>
               <div>
-                <span className="text-[10px] text-slate-400 block font-sans">Carbs</span>
-                <span className="font-bold text-cyan-600">{previewNutrition.carbs}g</span>
+                <span className="text-[10px] text-slate-400 dark:text-slate-500 block font-sans">Carbs</span>
+                <span className="font-bold text-cyan-600 dark:text-cyan-400">{previewNutrition.carbs}g</span>
               </div>
               <div>
-                <span className="text-[10px] text-slate-400 block font-sans">Fat</span>
-                <span className="font-bold text-amber-600">{previewNutrition.fat}g</span>
+                <span className="text-[10px] text-slate-400 dark:text-slate-500 block font-sans">Fat</span>
+                <span className="font-bold text-amber-600 dark:text-amber-400">{previewNutrition.fat}g</span>
               </div>
               <div>
-                <span className="text-[10px] text-slate-400 block font-sans">Fiber</span>
-                <span className="font-bold text-violet-600">{previewNutrition.fiber}g</span>
+                <span className="text-[10px] text-slate-400 dark:text-slate-500 block font-sans">Fiber</span>
+                <span className="font-bold text-violet-600 dark:text-violet-400">{previewNutrition.fiber}g</span>
               </div>
             </div>
           </div>
         )}
 
         {/* Footer Actions */}
-        <div className="flex items-center justify-between pt-2 border-t border-slate-200">
+        <div className="flex items-center justify-between pt-2 border-t border-slate-200 dark:border-slate-800">
           <button
             onClick={() => {
               onClose();
               onOpenCustomFood();
             }}
-            className="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition flex items-center gap-1.5"
+            className="px-3.5 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold text-xs rounded-xl transition flex items-center gap-1.5"
           >
-            <Plus className="w-4 h-4 text-emerald-600" />
+            <Plus className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
             <span>Create Custom Food</span>
           </button>
 
@@ -210,8 +210,8 @@ export default function AddFoodModal({ isOpen, onClose, targetMealType, onOpenCu
             onClick={handleAdd}
             className={`px-5 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition ${
               selectedFood
-                ? 'bg-indigo-600 text-white hover:bg-indigo-500 shadow-md shadow-indigo-500/20'
-                : 'bg-slate-200 text-slate-400 cursor-not-allowed'
+                ? 'bg-indigo-600 hover:bg-indigo-500 text-white shadow-md shadow-indigo-500/20'
+                : 'bg-slate-200 dark:bg-slate-800 text-slate-400 dark:text-slate-600 cursor-not-allowed'
             }`}
           >
             + Add to {targetMealType}

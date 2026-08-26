@@ -41,6 +41,38 @@ export function BulkTrackProvider({ children }) {
   useEffect(() => saveDailyLogs(dailyLogs), [dailyLogs]);
   useEffect(() => localStorage.setItem('bulktrack_sync_code', syncCode), [syncCode]);
 
+  // Theme State ('light' | 'dark')
+  const [theme, setThemeState] = useState(() => {
+    const saved = localStorage.getItem('bulktrack_theme');
+    if (saved) return saved;
+    return 'light';
+  });
+
+  useEffect(() => {
+    localStorage.setItem('bulktrack_theme', theme);
+    const root = document.documentElement;
+    if (theme === 'dark') {
+      root.classList.add('dark');
+      root.classList.remove('light');
+    } else {
+      root.classList.add('light');
+      root.classList.remove('dark');
+    }
+  }, [theme]);
+
+  const toggleTheme = () => {
+    const next = theme === 'dark' ? 'light' : 'dark';
+    setThemeState(next);
+    showToast(`Switched to ${next === 'dark' ? '🌙 Night Mode' : '☀️ Normal Mode'}`, 'info');
+  };
+
+  const setTheme = (newTheme) => {
+    if (newTheme === 'dark' || newTheme === 'light') {
+      setThemeState(newTheme);
+      showToast(`Switched to ${newTheme === 'dark' ? '🌙 Night Mode' : '☀️ Normal Mode'}`, 'info');
+    }
+  };
+
   // Toast Helper
   const showToast = (message, type = 'info') => {
     setToastMessage({ message, type, id: Date.now() });
@@ -547,6 +579,9 @@ export function BulkTrackProvider({ children }) {
     handleExport,
     handleImport,
     handleReset,
+    theme,
+    setTheme,
+    toggleTheme,
     toastMessage,
     showToast
   };

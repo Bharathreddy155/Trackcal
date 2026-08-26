@@ -12,8 +12,8 @@ export default function MacroCards({ consumed = {}, targets = {} }) {
       target: targets.protein || 105,
       unit: 'g',
       color: 'bg-emerald-500',
-      badgeColor: 'text-emerald-700 border-emerald-200 bg-emerald-50',
-      borderHover: 'hover:border-emerald-300'
+      badgeColor: 'text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800/60 bg-emerald-50 dark:bg-emerald-950/50',
+      borderHover: 'hover:border-emerald-300 dark:hover:border-emerald-500/50'
     },
     {
       id: 'carbs',
@@ -23,8 +23,8 @@ export default function MacroCards({ consumed = {}, targets = {} }) {
       target: targets.carbs || 395,
       unit: 'g',
       color: 'bg-cyan-500',
-      badgeColor: 'text-cyan-700 border-cyan-200 bg-cyan-50',
-      borderHover: 'hover:border-cyan-300'
+      badgeColor: 'text-cyan-700 dark:text-cyan-300 border-cyan-200 dark:border-cyan-800/60 bg-cyan-50 dark:bg-cyan-950/50',
+      borderHover: 'hover:border-cyan-300 dark:hover:border-cyan-500/50'
     },
     {
       id: 'fat',
@@ -34,8 +34,8 @@ export default function MacroCards({ consumed = {}, targets = {} }) {
       target: targets.fat || 77,
       unit: 'g',
       color: 'bg-amber-500',
-      badgeColor: 'text-amber-700 border-amber-200 bg-amber-50',
-      borderHover: 'hover:border-amber-300'
+      badgeColor: 'text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800/60 bg-amber-50 dark:bg-amber-950/50',
+      borderHover: 'hover:border-amber-300 dark:hover:border-amber-500/50'
     },
     {
       id: 'fiber',
@@ -45,8 +45,8 @@ export default function MacroCards({ consumed = {}, targets = {} }) {
       target: targets.fiber || 33,
       unit: 'g',
       color: 'bg-violet-500',
-      badgeColor: 'text-violet-700 border-violet-200 bg-violet-50',
-      borderHover: 'hover:border-violet-300'
+      badgeColor: 'text-violet-700 dark:text-violet-300 border-violet-200 dark:border-violet-800/60 bg-violet-50 dark:bg-violet-950/50',
+      borderHover: 'hover:border-violet-300 dark:hover:border-violet-500/50'
     }
   ];
 
@@ -64,14 +64,14 @@ export default function MacroCards({ consumed = {}, targets = {} }) {
         return (
           <div
             key={m.id}
-            className={`glass-panel p-4 rounded-2xl border border-slate-200 transition-all ${m.borderHover} flex flex-col justify-between`}
+            className={`glass-panel p-4 rounded-2xl border border-slate-200 dark:border-slate-800 transition-all ${m.borderHover} flex flex-col justify-between`}
           >
             <div>
               {/* Header Icon + Label */}
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
                   <span className="text-base">{m.icon}</span>
-                  <span className="text-xs font-bold text-slate-600 uppercase tracking-wider">{m.label}</span>
+                  <span className="text-xs font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider">{m.label}</span>
                 </div>
                 <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${m.badgeColor}`}>
                   {statusText}
@@ -80,12 +80,12 @@ export default function MacroCards({ consumed = {}, targets = {} }) {
 
               {/* Values */}
               <div className="flex items-baseline justify-between mt-2">
-                <div className="text-xl font-black text-slate-900 font-mono">
-                  {m.consumed} <span className="text-xs text-slate-400 font-normal">/ {m.target} {m.unit}</span>
+                <div className="text-xl font-black text-slate-900 dark:text-white font-mono">
+                  {m.consumed} <span className="text-xs text-slate-400 dark:text-slate-500 font-normal">/ {m.target} {m.unit}</span>
                 </div>
               </div>
 
-              <div className="text-xs text-slate-500 mt-1 font-mono">
+              <div className="text-xs text-slate-500 dark:text-slate-400 mt-1 font-mono">
                 {remaining > 0 ? `${remaining.toFixed(1)} ${m.unit} remaining` : 'Target met 🎉'}
               </div>
             </div>

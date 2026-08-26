@@ -25,27 +25,27 @@ export default function QuickWeight() {
   };
 
   return (
-    <div className="glass-panel p-5 rounded-2xl border border-slate-200 flex flex-col md:flex-row items-center justify-between gap-5">
+    <div className="glass-panel p-5 rounded-2xl border border-slate-200 dark:border-slate-800 flex flex-col md:flex-row items-center justify-between gap-5">
       
       {/* Left Info */}
       <div className="flex items-center gap-3.5 w-full md:w-auto">
-        <div className="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 border border-indigo-200 flex items-center justify-center text-xl shrink-0">
+        <div className="w-12 h-12 rounded-xl bg-indigo-50 dark:bg-indigo-950/80 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-500/30 flex items-center justify-center text-xl shrink-0">
           <Scale className="w-6 h-6" />
         </div>
 
         <div>
           <div className="flex items-center gap-2">
-            <span className="text-xs font-extrabold text-slate-400 uppercase tracking-wider">Body Weight</span>
-            <span className="text-xs font-bold text-indigo-600 font-mono">{percentage}% Goal Achieved</span>
+            <span className="text-xs font-extrabold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Body Weight</span>
+            <span className="text-xs font-bold text-indigo-600 dark:text-indigo-400 font-mono">{percentage}% Goal Achieved</span>
           </div>
 
           <div className="flex items-center gap-2 mt-0.5">
-            <span className="text-2xl font-black text-slate-900 font-mono">{currentWeight} <span className="text-xs text-slate-400">kg</span></span>
-            <ArrowRight className="w-4 h-4 text-slate-400" />
-            <span className="text-base font-bold text-emerald-600 font-mono">{goalWeight} <span className="text-xs text-slate-400">kg</span></span>
+            <span className="text-2xl font-black text-slate-900 dark:text-white font-mono">{currentWeight} <span className="text-xs text-slate-400">kg</span></span>
+            <ArrowRight className="w-4 h-4 text-slate-400 dark:text-slate-500" />
+            <span className="text-base font-bold text-emerald-600 dark:text-emerald-400 font-mono">{goalWeight} <span className="text-xs text-slate-400">kg</span></span>
           </div>
 
-          <p className="text-xs text-slate-500 font-mono mt-0.5">
+          <p className="text-xs text-slate-500 dark:text-slate-400 font-mono mt-0.5">
             {gainNeeded > 0 ? `${gainNeeded} kg remaining to reach goal` : 'Goal reached! 🎉'}
           </p>
         </div>
@@ -71,10 +71,10 @@ export default function QuickWeight() {
             max="150"
             value={inputVal}
             onChange={(e) => setInputVal(e.target.value)}
-            className="w-24 px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 font-mono font-bold text-sm focus:outline-none focus:border-indigo-500 focus:bg-white"
+            className="w-24 px-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-900 dark:text-white font-mono font-bold text-sm focus:outline-none focus:border-indigo-500 focus:bg-white dark:focus:bg-slate-950"
             placeholder="57.5"
           />
-          <span className="absolute right-2.5 top-2.5 text-xs text-slate-400 font-mono pointer-events-none">kg</span>
+          <span className="absolute right-2.5 top-2.5 text-xs text-slate-400 dark:text-slate-500 font-mono pointer-events-none">kg</span>
         </div>
 
         <button
