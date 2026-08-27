@@ -79,20 +79,21 @@ export default function WorkoutLogger({ isOpen, onClose }) {
     onClose();
   };
 
+  // Fixed footer with prominent Cancel (Close) and Save buttons
   const footerActions = (
-    <div className="flex flex-col sm:flex-row items-center justify-end gap-2.5 sm:gap-3 w-full">
+    <div className="flex flex-col-reverse sm:flex-row items-center justify-end gap-2 sm:gap-3 w-full">
       <button
         type="button"
         onClick={onClose}
-        className="w-full sm:w-auto px-4 py-2 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-xs font-bold rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 transition cursor-pointer text-center"
+        className="w-full sm:w-auto px-4 py-2 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-xs font-bold rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 transition cursor-pointer text-center border border-slate-200 dark:border-slate-700"
       >
-        Cancel
+        Cancel / Close
       </button>
 
       <button
         type="button"
         onClick={handleSubmit}
-        className="w-full sm:w-auto px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-black uppercase tracking-wider rounded-xl transition shadow-sm flex items-center justify-center gap-1.5 cursor-pointer"
+        className="w-full sm:w-auto px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-black uppercase tracking-wider rounded-xl transition shadow-md shadow-indigo-500/20 flex items-center justify-center gap-1.5 cursor-pointer text-center"
       >
         <CheckCircle2 className="w-4 h-4" />
         <span>Save Workout Session</span>
@@ -108,7 +109,7 @@ export default function WorkoutLogger({ isOpen, onClose }) {
       footer={footerActions}
       maxWidth="max-w-2xl"
     >
-      <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
+      <form onSubmit={handleSubmit} className="space-y-4">
         
         {/* Workout Presets & Name */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -160,15 +161,15 @@ export default function WorkoutLogger({ isOpen, onClose }) {
         </div>
 
         {/* Exercises & Sets */}
-        <div className="space-y-4 pt-1">
+        <div className="space-y-3.5 pt-1">
           <div className="flex items-center justify-between">
             <h4 className="text-xs font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">Exercises ({exercises.length})</h4>
             <button
               type="button"
               onClick={handleAddExercise}
-              className="text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1 cursor-pointer"
+              className="text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1 cursor-pointer bg-indigo-50 dark:bg-indigo-950/60 px-2.5 py-1 rounded-lg border border-indigo-200 dark:border-indigo-800/60"
             >
-              <Plus className="w-3.5 h-3.5" /> Add Exercise
+              <Plus className="w-3.5 h-3.5" /> + Add Exercise
             </button>
           </div>
 
@@ -179,26 +180,28 @@ export default function WorkoutLogger({ isOpen, onClose }) {
                   type="text"
                   value={ex.name}
                   onChange={(e) => handleExerciseNameChange(exIdx, e.target.value)}
-                  className="bg-transparent text-sm font-bold text-slate-900 dark:text-white focus:outline-none border-b border-transparent focus:border-indigo-500 px-1 py-0.5 flex-1"
+                  className="bg-transparent text-sm font-bold text-slate-900 dark:text-white focus:outline-none border-b border-slate-200 dark:border-slate-700 focus:border-indigo-500 px-1 py-0.5 flex-1"
                   placeholder="Exercise Name..."
                 />
 
                 <button
                   type="button"
                   onClick={() => handleRemoveExercise(exIdx)}
-                  className="text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 text-xs p-1 cursor-pointer"
+                  className="text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/60 border border-rose-200 dark:border-rose-800/60 text-xs px-2 py-1 rounded-lg flex items-center gap-1 font-bold shrink-0 cursor-pointer hover:bg-rose-100 dark:hover:bg-rose-900/60 transition"
+                  title="Remove exercise"
                 >
-                  <Trash2 className="w-4 h-4" />
+                  <Trash2 className="w-3.5 h-3.5" />
+                  <span className="text-[10px]">Remove</span>
                 </button>
               </div>
 
               {/* Sets Table */}
               <div className="space-y-1.5 font-mono text-xs">
                 {ex.sets.map((set, setIdx) => (
-                  <div key={setIdx} className="flex items-center justify-between gap-2 p-2 bg-white dark:bg-slate-950/80 rounded-lg border border-slate-200 dark:border-slate-800">
+                  <div key={setIdx} className="flex items-center justify-between gap-1.5 sm:gap-2 p-2 bg-white dark:bg-slate-950/80 rounded-lg border border-slate-200 dark:border-slate-800">
                     <span className="text-slate-500 dark:text-slate-400 font-bold text-[11px] sm:text-xs shrink-0">Set {setIdx + 1}</span>
 
-                    <div className="flex items-center gap-1.5 sm:gap-2">
+                    <div className="flex items-center gap-1 sm:gap-2">
                       <div className="flex items-center gap-1">
                         <input
                           type="number"
@@ -206,7 +209,7 @@ export default function WorkoutLogger({ isOpen, onClose }) {
                           min="0"
                           value={set.weight}
                           onChange={(e) => handleSetChange(exIdx, setIdx, 'weight', e.target.value)}
-                          className="w-12 sm:w-16 px-1.5 py-1 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded text-slate-900 dark:text-white text-center font-bold text-xs"
+                          className="w-13 sm:w-16 px-1.5 py-1 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded text-slate-900 dark:text-white text-center font-bold text-xs"
                         />
                         <span className="text-slate-400 dark:text-slate-500 text-[10px] sm:text-[11px]">kg</span>
                       </div>
@@ -219,7 +222,7 @@ export default function WorkoutLogger({ isOpen, onClose }) {
                           min="1"
                           value={set.reps}
                           onChange={(e) => handleSetChange(exIdx, setIdx, 'reps', e.target.value)}
-                          className="w-11 sm:w-14 px-1.5 py-1 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded text-slate-900 dark:text-white text-center font-bold text-xs"
+                          className="w-12 sm:w-14 px-1.5 py-1 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded text-slate-900 dark:text-white text-center font-bold text-xs"
                         />
                         <span className="text-slate-400 dark:text-slate-500 text-[10px] sm:text-[11px]">reps</span>
                       </div>
@@ -228,7 +231,8 @@ export default function WorkoutLogger({ isOpen, onClose }) {
                     <button
                       type="button"
                       onClick={() => handleRemoveSet(exIdx, setIdx)}
-                      className="text-slate-400 hover:text-rose-500 text-xs p-1 cursor-pointer"
+                      className="w-6 h-6 flex items-center justify-center text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950 rounded text-xs font-bold shrink-0 cursor-pointer"
+                      title="Remove set"
                     >
                       ✕
                     </button>
