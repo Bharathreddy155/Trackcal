@@ -37,8 +37,33 @@ export default function CustomFoodModal({ isOpen, onClose }) {
     onClose();
   };
 
+  const footerActions = (
+    <div className="flex flex-col sm:flex-row items-center justify-end gap-2.5 sm:gap-2 w-full">
+      <button
+        type="button"
+        onClick={onClose}
+        className="w-full sm:w-auto px-4 py-2 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-xs font-bold rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 transition cursor-pointer text-center"
+      >
+        Cancel
+      </button>
+      <button
+        type="button"
+        onClick={handleSubmit}
+        className="w-full sm:w-auto px-5 py-2 bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-black uppercase tracking-wider rounded-xl transition shadow-sm cursor-pointer text-center"
+      >
+        Save Custom Food
+      </button>
+    </div>
+  );
+
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Create Custom Food" maxWidth="max-w-md">
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title="Create Custom Food"
+      footer={footerActions}
+      maxWidth="max-w-md"
+    >
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label className="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1">Food Name *</label>
@@ -153,22 +178,6 @@ export default function CustomFoodModal({ isOpen, onClose }) {
               className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-violet-600 dark:text-violet-400 font-mono text-sm focus:outline-none focus:border-indigo-500 focus:bg-white dark:focus:bg-slate-900"
             />
           </div>
-        </div>
-
-        <div className="flex items-center justify-end gap-2 pt-4 border-t border-slate-200 dark:border-slate-800">
-          <button
-            type="button"
-            onClick={onClose}
-            className="px-4 py-2 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-xs font-bold rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 transition"
-          >
-            Cancel
-          </button>
-          <button
-            type="submit"
-            className="px-5 py-2 bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-black uppercase tracking-wider rounded-xl transition shadow-sm"
-          >
-            Save Custom Food
-          </button>
         </div>
       </form>
     </Modal>

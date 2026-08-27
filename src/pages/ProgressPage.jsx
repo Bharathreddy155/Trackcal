@@ -36,8 +36,8 @@ export default function ProgressPage() {
   const gridStroke = isDark ? '#1e293b' : '#e2e8f0';
   const axisStroke = isDark ? '#64748b' : '#94a3b8';
   const tooltipStyle = isDark
-    ? { backgroundColor: '#0f172a', borderColor: '#334155', borderRadius: '12px', color: '#f8fafc', boxShadow: '0 4px 12px rgba(0,0,0,0.5)' }
-    : { backgroundColor: '#ffffff', borderColor: '#e2e8f0', borderRadius: '12px', color: '#0f172a', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' };
+    ? { backgroundColor: '#0f172a', borderColor: '#334155', borderRadius: '12px', color: '#f8fafc', boxShadow: '0 4px 12px rgba(0,0,0,0.5)', fontSize: '12px' }
+    : { backgroundColor: '#ffffff', borderColor: '#e2e8f0', borderRadius: '12px', color: '#0f172a', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)', fontSize: '12px' };
 
   // Prepare chart data for last 14 days
   const last14Days = getLastNDays(14);
@@ -71,9 +71,9 @@ export default function ProgressPage() {
       
       {/* Header */}
       <div>
-        <h2 className="text-xl font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
-          <TrendingUp className="w-6 h-6 text-indigo-600 dark:text-indigo-400" />
-          <span>Progress & Body Weight Analytics</span>
+        <h2 className="text-lg sm:text-xl font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
+          <TrendingUp className="w-5 h-5 sm:w-6 sm:h-6 text-indigo-600 dark:text-indigo-400" />
+          <span>Progress & Analytics</span>
         </h2>
         <p className="text-xs text-slate-500 dark:text-slate-400 font-medium mt-1">
           Track your weight progression from 57.5 kg toward your 70.0 kg goal, calorie trends, and macro adherence.
@@ -81,13 +81,13 @@ export default function ProgressPage() {
       </div>
 
       {/* Main Weight Progress Hero Card */}
-      <div className="glass-panel p-6 rounded-3xl border border-slate-200 dark:border-slate-800 space-y-5">
+      <div className="glass-panel p-5 sm:p-6 rounded-3xl border border-slate-200 dark:border-slate-800 space-y-5">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <span className="text-xs font-extrabold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Bulking Journey</span>
-            <div className="text-3xl font-black text-slate-900 dark:text-white font-mono mt-1 flex items-baseline gap-2">
+            <span className="text-[11px] sm:text-xs font-extrabold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Bulking Journey</span>
+            <div className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white font-mono mt-1 flex items-baseline gap-2 flex-wrap">
               <span>{currentWeight} kg</span>
-              <span className="text-sm font-normal text-slate-400">→ Goal:</span>
+              <span className="text-xs sm:text-sm font-normal text-slate-400">→ Goal:</span>
               <span className="text-emerald-600 dark:text-emerald-400">{goalWeight} kg</span>
             </div>
             <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 font-mono">
@@ -95,8 +95,8 @@ export default function ProgressPage() {
             </p>
           </div>
 
-          <form onSubmit={handleWeightSubmit} className="flex items-center gap-2">
-            <div className="relative">
+          <form onSubmit={handleWeightSubmit} className="flex items-center gap-2 w-full md:w-auto">
+            <div className="relative flex-1 md:flex-none">
               <input
                 type="number"
                 step="0.1"
@@ -104,15 +104,15 @@ export default function ProgressPage() {
                 max="150"
                 value={newWeightInput}
                 onChange={(e) => setNewWeightInput(e.target.value)}
-                className="w-28 px-3 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-900 dark:text-white font-mono font-bold text-sm focus:outline-none focus:border-indigo-500 focus:bg-white dark:focus:bg-slate-900"
+                className="w-full md:w-28 px-3 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-900 dark:text-white font-mono font-bold text-sm focus:outline-none focus:border-indigo-500 focus:bg-white dark:focus:bg-slate-900"
               />
               <span className="absolute right-2.5 top-2.5 text-xs text-slate-400 dark:text-slate-500 font-mono pointer-events-none">kg</span>
             </div>
             <button
               type="submit"
-              className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-black uppercase tracking-wider rounded-xl transition shadow-md shadow-indigo-500/20"
+              className="px-3.5 sm:px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-black uppercase tracking-wider rounded-xl transition shadow-md shadow-indigo-500/20 whitespace-nowrap cursor-pointer"
             >
-              Log Today Weight
+              Log Weight
             </button>
           </form>
         </div>
@@ -121,52 +121,52 @@ export default function ProgressPage() {
           value={achievedGain}
           max={totalGainGoal || 1}
           colorClass="bg-indigo-500"
-          height="h-3"
+          height="h-2.5 sm:h-3"
           showPercent
         />
       </div>
 
       {/* Weight Progression Chart */}
-      <div className="glass-panel p-5 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-3">
+      <div className="glass-panel p-4 sm:p-5 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-3">
         <div className="flex items-center justify-between">
-          <h3 className="text-sm font-extrabold text-slate-800 dark:text-white uppercase tracking-wider flex items-center gap-2">
+          <h3 className="text-xs sm:text-sm font-extrabold text-slate-800 dark:text-white uppercase tracking-wider flex items-center gap-1.5">
             <Scale className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
-            <span>Weight Progress Chart (kg)</span>
+            <span>Weight Progress (kg)</span>
           </h3>
-          <span className="text-xs text-slate-400 dark:text-slate-500 font-mono">14 Days Trend</span>
+          <span className="text-[11px] text-slate-400 dark:text-slate-500 font-mono">14 Days Trend</span>
         </div>
 
-        <div className="h-64 w-full pt-4">
+        <div className="h-56 sm:h-64 w-full pt-2">
           <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={chartData}>
+            <LineChart data={chartData} margin={{ top: 5, right: 10, left: -20, bottom: 5 }}>
               <CartesianGrid strokeDasharray="3 3" stroke={gridStroke} />
-              <XAxis dataKey="date" stroke={axisStroke} tick={{ fontSize: 11 }} />
-              <YAxis domain={['dataMin - 1', 'dataMax + 1']} stroke={axisStroke} tick={{ fontSize: 11 }} />
+              <XAxis dataKey="date" stroke={axisStroke} tick={{ fontSize: 10 }} />
+              <YAxis domain={['dataMin - 1', 'dataMax + 1']} stroke={axisStroke} tick={{ fontSize: 10 }} />
               <Tooltip contentStyle={tooltipStyle} />
-              <Line type="monotone" dataKey="weight" stroke="#6366f1" strokeWidth={3} dot={{ r: 4, fill: '#6366f1' }} />
+              <Line type="monotone" dataKey="weight" stroke="#6366f1" strokeWidth={3} dot={{ r: 3, fill: '#6366f1' }} />
             </LineChart>
           </ResponsiveContainer>
         </div>
       </div>
 
       {/* Calorie Intake Chart */}
-      <div className="glass-panel p-5 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-3">
+      <div className="glass-panel p-4 sm:p-5 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-3">
         <div className="flex items-center justify-between">
-          <h3 className="text-sm font-extrabold text-slate-800 dark:text-white uppercase tracking-wider flex items-center gap-2">
+          <h3 className="text-xs sm:text-sm font-extrabold text-slate-800 dark:text-white uppercase tracking-wider flex items-center gap-1.5">
             <Flame className="w-4 h-4 text-amber-500" />
-            <span>Daily Calorie Intake (kcal)</span>
+            <span>Calorie Intake (kcal)</span>
           </h3>
-          <span className="text-xs text-emerald-600 dark:text-emerald-400 font-mono font-bold">Target: {targets.calories || 2725} kcal</span>
+          <span className="text-[11px] text-emerald-600 dark:text-emerald-400 font-mono font-bold">Goal: {targets.calories || 2725}</span>
         </div>
 
-        <div className="h-64 w-full pt-4">
+        <div className="h-56 sm:h-64 w-full pt-2">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={chartData}>
+            <BarChart data={chartData} margin={{ top: 5, right: 10, left: -15, bottom: 5 }}>
               <CartesianGrid strokeDasharray="3 3" stroke={gridStroke} />
-              <XAxis dataKey="date" stroke={axisStroke} tick={{ fontSize: 11 }} />
-              <YAxis stroke={axisStroke} tick={{ fontSize: 11 }} />
+              <XAxis dataKey="date" stroke={axisStroke} tick={{ fontSize: 10 }} />
+              <YAxis stroke={axisStroke} tick={{ fontSize: 10 }} />
               <Tooltip contentStyle={tooltipStyle} />
-              <Bar dataKey="calories" fill="#6366f1" radius={[6, 6, 0, 0]} />
+              <Bar dataKey="calories" fill="#6366f1" radius={[4, 4, 0, 0]} />
               <Line type="monotone" dataKey="targetCalories" stroke="#f59e0b" strokeDasharray="5 5" />
             </BarChart>
           </ResponsiveContainer>
@@ -174,23 +174,23 @@ export default function ProgressPage() {
       </div>
 
       {/* Macro Breakdown Chart */}
-      <div className="glass-panel p-5 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-3">
+      <div className="glass-panel p-4 sm:p-5 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-3">
         <div className="flex items-center justify-between">
-          <h3 className="text-sm font-extrabold text-slate-800 dark:text-white uppercase tracking-wider">Macro Intake Trends (g)</h3>
-          <span className="text-xs text-slate-400 dark:text-slate-500 font-mono">Protein / Carbs / Fat</span>
+          <h3 className="text-xs sm:text-sm font-extrabold text-slate-800 dark:text-white uppercase tracking-wider">Macro Intake Trends (g)</h3>
+          <span className="text-[11px] text-slate-400 dark:text-slate-500 font-mono">P / C / F</span>
         </div>
 
-        <div className="h-64 w-full pt-4">
+        <div className="h-56 sm:h-64 w-full pt-2">
           <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={chartData}>
+            <LineChart data={chartData} margin={{ top: 5, right: 10, left: -15, bottom: 5 }}>
               <CartesianGrid strokeDasharray="3 3" stroke={gridStroke} />
-              <XAxis dataKey="date" stroke={axisStroke} tick={{ fontSize: 11 }} />
-              <YAxis stroke={axisStroke} tick={{ fontSize: 11 }} />
+              <XAxis dataKey="date" stroke={axisStroke} tick={{ fontSize: 10 }} />
+              <YAxis stroke={axisStroke} tick={{ fontSize: 10 }} />
               <Tooltip contentStyle={tooltipStyle} />
-              <Legend />
-              <Line type="monotone" dataKey="protein" name="Protein (g)" stroke="#10b981" strokeWidth={2} />
-              <Line type="monotone" dataKey="carbs" name="Carbs (g)" stroke="#06b6d4" strokeWidth={2} />
-              <Line type="monotone" dataKey="fat" name="Fat (g)" stroke="#f59e0b" strokeWidth={2} />
+              <Legend wrapperStyle={{ fontSize: '11px', paddingTop: '8px' }} />
+              <Line type="monotone" dataKey="protein" name="Protein" stroke="#10b981" strokeWidth={2} />
+              <Line type="monotone" dataKey="carbs" name="Carbs" stroke="#06b6d4" strokeWidth={2} />
+              <Line type="monotone" dataKey="fat" name="Fat" stroke="#f59e0b" strokeWidth={2} />
             </LineChart>
           </ResponsiveContainer>
         </div>
