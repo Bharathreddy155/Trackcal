@@ -86,6 +86,29 @@
   box-shadow: 0 2px 8px -1px rgba(0, 0, 0, 0.3);
 }
 
+/* Custom smooth scrollbar styling for modals & tables */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.35);
+  border-radius: 9999px;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.25);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(99, 102, 241, 0.7);
+}
+
 /* Hide scrollbars for slick mobile horizontal scrolling */
 .no-scrollbar::-webkit-scrollbar {
   display: none;

@@ -71,10 +71,11 @@ export default function Modal({
           </button>
         </div>
 
-        {/* Scrollable Content Area (Independent scroll, overscroll-contain, always resets to 0) */}
+        {/* Scrollable Content Area (Independent scroll, overscroll-contain, smooth touch scrolling) */}
         <div
           ref={contentRef}
-          className="flex-1 overflow-y-auto overscroll-contain p-6 text-slate-700 dark:text-slate-200 space-y-6"
+          className="flex-1 overflow-y-auto overscroll-contain p-5 sm:p-6 text-slate-700 dark:text-slate-200 space-y-5"
+          style={{ WebkitOverflowScrolling: 'touch' }}
         >
           {children}
         </div>
