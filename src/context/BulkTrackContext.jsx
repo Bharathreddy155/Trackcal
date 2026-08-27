@@ -223,6 +223,22 @@ export function BulkTrackProvider({ children }) {
     showToast(`Unlogged ${mealType}`, 'info');
   };
 
+  // Helper to get effective meal items for mutation
+  const getEffectiveMealItems = (log, mealType) => {
+    const meal = log.meals?.[mealType];
+    if (meal?.items && meal.items.length > 0) {
+      return meal.items;
+    }
+    return getPlannedMealItems(
+      log.dayType,
+      mealType,
+      log.chickenQuantity || 175,
+      log.curryQuantityLunch || 60,
+      log.curryQuantityDinner || 60,
+      mealTemplates
+    );
+  };
+
   // Add Food to Meal
   const addFoodToMeal = (mealType, foodId, quantity, unit) => {
     const food = getFoodById(foods, foodId);
@@ -231,8 +247,8 @@ export function BulkTrackProvider({ children }) {
     const newItem = { foodId, quantity: Number(quantity), unit: unit || food.servingUnit };
 
     updateCurrentDailyLog(log => {
-      const meal = log.meals[mealType] || { isLogged: false, items: [] };
-      const currentItems = meal.items || [];
+      const meal = log.meals?.[mealType] || { isLogged: false, items: [] };
+      const currentItems = getEffectiveMealItems(log, mealType);
       const updatedItems = [...currentItems, newItem];
 
       return {
@@ -250,15 +266,17 @@ export function BulkTrackProvider({ children }) {
   // Edit Food Quantity in Meal
   const updateFoodInMeal = (mealType, itemIndex, newQuantity, newUnit) => {
     updateCurrentDailyLog(log => {
-      const meal = log.meals[mealType];
-      if (!meal || !meal.items) return log;
+      const meal = log.meals?.[mealType] || { isLogged: false, items: [] };
+      const currentItems = getEffectiveMealItems(log, mealType);
+      const updatedItems = [...currentItems];
 
-      const updatedItems = [...meal.items];
-      updatedItems[itemIndex] = {
-        ...updatedItems[itemIndex],
-        quantity: Number(newQuantity),
-        unit: newUnit || updatedItems[itemIndex].unit
-      };
+      if (updatedItems[itemIndex]) {
+        updatedItems[itemIndex] = {
+          ...updatedItems[itemIndex],
+          quantity: Number(newQuantity),
+          unit: newUnit || updatedItems[itemIndex].unit
+        };
+      }
 
       return {
         ...log,
@@ -274,10 +292,9 @@ export function BulkTrackProvider({ children }) {
   // Remove Food from Meal
   const removeFoodFromMeal = (mealType, itemIndex) => {
     updateCurrentDailyLog(log => {
-      const meal = log.meals[mealType];
-      if (!meal || !meal.items) return log;
-
-      const updatedItems = meal.items.filter((_, idx) => idx !== itemIndex);
+      const meal = log.meals?.[mealType] || { isLogged: false, items: [] };
+      const currentItems = getEffectiveMealItems(log, mealType);
+      const updatedItems = currentItems.filter((_, idx) => idx !== itemIndex);
 
       return {
         ...log,

@@ -3,12 +3,13 @@ import React from 'react';
 import Modal from '../Shared/Modal';
 import { Trash2, Plus, Save, RotateCcw, Edit3 } from 'lucide-react';
 import { useBulkTrack } from '../../context/BulkTrackContext';
-import { calculateFoodItemNutrition, calculateMealNutrition, getFoodById } from '../../services/nutritionEngine';
+import { calculateFoodItemNutrition, calculateMealNutrition, getFoodById, getPlannedMealItems } from '../../services/nutritionEngine';
 
 export default function MealDetailModal({ isOpen, onClose, mealType, onOpenAddFood }) {
   const {
     currentLog,
     foods,
+    mealTemplates,
     updateFoodInMeal,
     removeFoodFromMeal,
     saveMealAsDefault,
@@ -18,7 +19,16 @@ export default function MealDetailModal({ isOpen, onClose, mealType, onOpenAddFo
   if (!mealType) return null;
 
   const mealData = currentLog?.meals?.[mealType] || {};
-  const items = mealData.items || [];
+  const dayType = currentLog?.dayType || 'non-chicken';
+  const chickenQty = currentLog?.chickenQuantity || 175;
+  const curryQtyLunch = currentLog?.curryQuantityLunch || 60;
+  const curryQtyDinner = currentLog?.curryQuantityDinner || 60;
+
+  // Always retrieve the effective food items (even before the meal is logged)
+  const items = mealData.items && mealData.items.length > 0
+    ? mealData.items
+    : getPlannedMealItems(dayType, mealType, chickenQty, curryQtyLunch, curryQtyDinner, mealTemplates);
+
   const mealTitle = mealType.charAt(0).toUpperCase() + mealType.slice(1);
   const mealNutrition = calculateMealNutrition(items, foods);
 
