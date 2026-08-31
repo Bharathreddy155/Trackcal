@@ -45,7 +45,7 @@ export default function WorkoutPage() {
             <span>Workout Tracker</span>
           </h2>
           <p className="text-xs text-slate-500 dark:text-slate-400 font-medium mt-1">
-            4-Day Bulking Split • 2 Muscles per Session • 3 Variations each (6 Variations total).
+            4-Day Bulking Split • 2 Muscles per Session with Targeted Exercise Variations.
           </p>
         </div>
 
@@ -54,7 +54,7 @@ export default function WorkoutPage() {
           className="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-black text-xs uppercase tracking-wider rounded-xl transition shadow-md shadow-indigo-500/20 flex items-center gap-1.5 self-start sm:self-auto cursor-pointer"
         >
           <Plus className="w-4 h-4" />
-          <span>+ Log Workout (6 Variations)</span>
+          <span>+ Log Workout</span>
         </button>
       </div>
 
@@ -105,7 +105,7 @@ export default function WorkoutPage() {
               <div>
                 <h3 className="text-base font-extrabold text-slate-900 dark:text-white">{currentLog.workout.name}</h3>
                 <span className="text-xs text-indigo-600 dark:text-indigo-400 font-mono font-bold">
-                  {currentLog.workout.exercises?.length || 0} Variations Completed
+                  {currentLog.workout.exercises?.length || 0} Exercises Completed
                 </span>
               </div>
               <span className="text-xs text-slate-500 dark:text-slate-400 font-mono flex items-center gap-1">
@@ -134,17 +134,17 @@ export default function WorkoutPage() {
           </div>
         ) : (
           <div className="text-center py-6 text-slate-400 dark:text-slate-500 text-xs">
-            No workout logged for today. Tap "+ Log Workout" to log your 6-variation session!
+            No workout logged for today. Tap "+ Log Workout" to log your training session!
           </div>
         )}
       </div>
 
-      {/* 2-Muscle Split Workout Routines (3 Variations per muscle = 6 total) */}
+      {/* 2-Muscle Split Workout Routines */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <h3 className="text-sm font-extrabold text-slate-800 dark:text-white uppercase tracking-wider flex items-center gap-1.5">
             <Layers className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
-            <span>Workout Splits (6 Variations: 3 per Muscle)</span>
+            <span>Workout Split Routines</span>
           </h3>
           <span className="text-xs text-slate-400 dark:text-slate-500 font-mono">4 Routines Available</span>
         </div>
@@ -152,8 +152,8 @@ export default function WorkoutPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {Object.keys(WORKOUT_ROUTINES).map((key) => {
             const routine = WORKOUT_ROUTINES[key];
-            const muscle1Exercises = routine.exercises.slice(0, 3);
-            const muscle2Exercises = routine.exercises.slice(3, 6);
+            const muscle1Exercises = routine.exercises.filter(e => e.muscle === routine.muscle1.split(' ')[0] || e.muscle === 'Chest' || e.muscle === 'Back' || e.muscle === 'Legs' || e.muscle === 'Shoulders');
+            const muscle2Exercises = routine.exercises.filter(e => !muscle1Exercises.includes(e));
 
             return (
               <div key={key} className="glass-panel p-5 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-4 flex flex-col justify-between">
@@ -161,15 +161,15 @@ export default function WorkoutPage() {
                   <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
                     <div>
                       <h4 className="text-base font-extrabold text-slate-900 dark:text-white">{routine.name}</h4>
-                      <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">6 Total Variations (3 Sets each)</p>
+                      <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{routine.exercises.length} Targeted Exercises (3 Sets each)</p>
                     </div>
                     <span className="text-[11px] font-extrabold px-2.5 py-1 rounded-full bg-indigo-50 dark:bg-indigo-950/80 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800/60 font-mono">
-                      6 Variations
+                      {routine.exercises.length} Exercises
                     </span>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-3">
-                    {/* Muscle 1 (3 variations) */}
+                    {/* Muscle 1 */}
                     <div className="p-3 bg-slate-50 dark:bg-slate-950/60 rounded-xl border border-slate-200 dark:border-slate-800/80 space-y-2">
                       <span className="text-[11px] font-extrabold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider block">
                         {routine.muscle1}
@@ -184,7 +184,7 @@ export default function WorkoutPage() {
                       </div>
                     </div>
 
-                    {/* Muscle 2 (3 variations) */}
+                    {/* Muscle 2 */}
                     <div className="p-3 bg-slate-50 dark:bg-slate-950/60 rounded-xl border border-slate-200 dark:border-slate-800/80 space-y-2">
                       <span className="text-[11px] font-extrabold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider block">
                         {routine.muscle2}
@@ -192,7 +192,7 @@ export default function WorkoutPage() {
                       <div className="space-y-1.5 text-xs font-mono">
                         {muscle2Exercises.map((ex, i) => (
                           <div key={i} className="text-slate-700 dark:text-slate-300 flex items-start gap-1">
-                            <span className="text-slate-400 shrink-0">#{i + 4}</span>
+                            <span className="text-slate-400 shrink-0">#{i + 1}</span>
                             <span className="font-semibold text-slate-900 dark:text-white truncate">{ex.name}</span>
                           </div>
                         ))}

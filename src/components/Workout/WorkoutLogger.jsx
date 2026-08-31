@@ -12,12 +12,12 @@ export const WORKOUT_ROUTINES = {
     exercises: [
       // Muscle 1: Chest (3 variations)
       {
-        name: 'Flat Barbell Bench Press',
+        name: 'Pec Deck',
         muscle: 'Chest',
         sets: [
+          { weight: 35, reps: 12 },
           { weight: 40, reps: 10 },
-          { weight: 45, reps: 8 },
-          { weight: 50, reps: 6 }
+          { weight: 45, reps: 8 }
         ]
       },
       {
@@ -30,7 +30,7 @@ export const WORKOUT_ROUTINES = {
         ]
       },
       {
-        name: 'Cable Chest Flyes / Pec Deck',
+        name: 'Cable Chest Flyes',
         muscle: 'Chest',
         sets: [
           { weight: 15, reps: 12 },
@@ -58,22 +58,22 @@ export const WORKOUT_ROUTINES = {
         ]
       },
       {
-        name: 'Skull Crushers / Dips',
+        name: 'Tricep Rod Pushdowns',
         muscle: 'Triceps',
         sets: [
-          { weight: 20, reps: 10 },
-          { weight: 25, reps: 8 },
-          { weight: 25, reps: 8 }
+          { weight: 22.5, reps: 12 },
+          { weight: 25, reps: 10 },
+          { weight: 30, reps: 8 }
         ]
       }
     ]
   },
   'Back / Biceps': {
     name: 'Back / Biceps',
-    muscle1: 'Back (3 Variations)',
+    muscle1: 'Back (4 Variations)',
     muscle2: 'Biceps (3 Variations)',
     exercises: [
-      // Muscle 1: Back (3 variations)
+      // Muscle 1: Back (4 variations)
       {
         name: 'Wide Grip Lat Pulldown',
         muscle: 'Back',
@@ -101,18 +101,27 @@ export const WORKOUT_ROUTINES = {
           { weight: 20, reps: 8 }
         ]
       },
+      {
+        name: 'Back Extensions',
+        muscle: 'Back',
+        sets: [
+          { weight: 0, reps: 15 },
+          { weight: 5, reps: 12 },
+          { weight: 10, reps: 10 }
+        ]
+      },
       // Muscle 2: Biceps (3 variations)
       {
-        name: 'Barbell Bicep Curls',
+        name: 'Incline Dumbbell Curls',
         muscle: 'Biceps',
         sets: [
-          { weight: 20, reps: 12 },
-          { weight: 25, reps: 10 },
-          { weight: 27.5, reps: 8 }
+          { weight: 10, reps: 12 },
+          { weight: 12, reps: 10 },
+          { weight: 14, reps: 8 }
         ]
       },
       {
-        name: 'Incline Dumbbell Hammer Curls',
+        name: 'Dumbbell Hammer Curls',
         muscle: 'Biceps',
         sets: [
           { weight: 12, reps: 12 },
@@ -121,22 +130,22 @@ export const WORKOUT_ROUTINES = {
         ]
       },
       {
-        name: 'Preacher / Concentration Curls',
+        name: 'Preacher / Barbell Bicep Curls',
         muscle: 'Biceps',
         sets: [
-          { weight: 10, reps: 12 },
-          { weight: 12, reps: 10 },
-          { weight: 14, reps: 8 }
+          { weight: 20, reps: 12 },
+          { weight: 25, reps: 10 },
+          { weight: 27.5, reps: 8 }
         ]
       }
     ]
   },
   'Legs / Abs': {
     name: 'Legs / Abs',
-    muscle1: 'Legs (3 Variations)',
+    muscle1: 'Legs (4 Variations)',
     muscle2: 'Abs (3 Variations)',
     exercises: [
-      // Muscle 1: Legs (3 variations)
+      // Muscle 1: Legs (4 variations)
       {
         name: 'Barbell Squats / Leg Press',
         muscle: 'Legs',
@@ -156,12 +165,21 @@ export const WORKOUT_ROUTINES = {
         ]
       },
       {
-        name: 'Leg Extensions / Calf Raises',
+        name: 'Leg Extensions',
         muscle: 'Legs',
         sets: [
           { weight: 35, reps: 15 },
           { weight: 40, reps: 12 },
           { weight: 45, reps: 10 }
+        ]
+      },
+      {
+        name: 'Calf Raises',
+        muscle: 'Legs',
+        sets: [
+          { weight: 30, reps: 15 },
+          { weight: 40, reps: 15 },
+          { weight: 45, reps: 12 }
         ]
       },
       // Muscle 2: Abs (3 variations)
@@ -184,20 +202,20 @@ export const WORKOUT_ROUTINES = {
         ]
       },
       {
-        name: 'Plank Hold / Ab Wheel Rollouts',
+        name: 'Obliques',
         muscle: 'Abs',
         sets: [
-          { weight: 0, reps: 60 },
-          { weight: 0, reps: 60 },
-          { weight: 0, reps: 45 }
+          { weight: 10, reps: 15 },
+          { weight: 12.5, reps: 15 },
+          { weight: 15, reps: 12 }
         ]
       }
     ]
   },
-  'Shoulders / Arms': {
-    name: 'Shoulders / Arms',
+  'Shoulders / Arms & Traps': {
+    name: 'Shoulders / Arms & Traps',
     muscle1: 'Shoulders (3 Variations)',
-    muscle2: 'Arms (3 Variations)',
+    muscle2: 'Arms / Traps (3 Variations)',
     exercises: [
       // Muscle 1: Shoulders (3 variations)
       {
@@ -227,10 +245,10 @@ export const WORKOUT_ROUTINES = {
           { weight: 20, reps: 10 }
         ]
       },
-      // Muscle 2: Arms (3 variations)
+      // Muscle 2: Arms / Traps (3 variations)
       {
         name: 'EZ-Bar Bicep Curls',
-        muscle: 'Arms',
+        muscle: 'Arms / Traps',
         sets: [
           { weight: 20, reps: 12 },
           { weight: 25, reps: 10 },
@@ -239,7 +257,7 @@ export const WORKOUT_ROUTINES = {
       },
       {
         name: 'Cable Overhead Tricep Extension',
-        muscle: 'Arms',
+        muscle: 'Arms / Traps',
         sets: [
           { weight: 15, reps: 12 },
           { weight: 17.5, reps: 10 },
@@ -248,7 +266,7 @@ export const WORKOUT_ROUTINES = {
       },
       {
         name: 'Dumbbell Shrugs (Traps)',
-        muscle: 'Arms',
+        muscle: 'Arms / Traps',
         sets: [
           { weight: 20, reps: 15 },
           { weight: 22, reps: 12 },
@@ -341,7 +359,7 @@ export default function WorkoutLogger({ isOpen, onClose }) {
   const footerActions = (
     <div className="flex flex-col-reverse sm:flex-row items-center justify-between gap-2.5 sm:gap-3 w-full">
       <span className="text-xs text-slate-500 dark:text-slate-400 font-mono hidden sm:inline">
-        {exercises.length} Exercises • 3 Variations / Muscle
+        {exercises.length} Exercises Selected
       </span>
 
       <div className="flex items-center gap-2 w-full sm:w-auto">
@@ -359,7 +377,7 @@ export default function WorkoutLogger({ isOpen, onClose }) {
           className="flex-1 sm:flex-none px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-black uppercase tracking-wider rounded-xl transition shadow-md shadow-indigo-500/20 flex items-center justify-center gap-1.5 cursor-pointer text-center"
         >
           <CheckCircle2 className="w-4 h-4" />
-          <span>Save 6 Variations</span>
+          <span>Save Workout Session</span>
         </button>
       </div>
     </div>
@@ -369,7 +387,7 @@ export default function WorkoutLogger({ isOpen, onClose }) {
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="Log Workout Session (6 Variations)"
+      title="Log Workout Session"
       footer={footerActions}
       maxWidth="max-w-3xl"
     >
@@ -405,12 +423,12 @@ export default function WorkoutLogger({ isOpen, onClose }) {
           </div>
         </div>
 
-        {/* 2-Muscle Split Selector (3 variations per muscle = 6 total) */}
+        {/* 2-Muscle Split Selector */}
         <div>
           <div className="flex items-center justify-between mb-1.5">
             <span className="text-[11px] font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-wider flex items-center gap-1">
               <Sparkles className="w-3.5 h-3.5 text-indigo-500" />
-              <span>Select 2-Muscle Routine (3 variations each = 6 total):</span>
+              <span>Select Routine Preset:</span>
             </span>
           </div>
 
@@ -431,7 +449,7 @@ export default function WorkoutLogger({ isOpen, onClose }) {
                 >
                   <div className="font-bold text-xs truncate">{routine.name}</div>
                   <div className={`text-[10px] mt-1 font-mono ${isSelected ? 'text-indigo-100' : 'text-slate-400 dark:text-slate-500'}`}>
-                    6 Variations (3+3)
+                    {routine.exercises.length} Variations
                   </div>
                 </button>
               );
@@ -439,7 +457,7 @@ export default function WorkoutLogger({ isOpen, onClose }) {
           </div>
         </div>
 
-        {/* Exercises (6 Variations) */}
+        {/* Exercises List */}
         <div className="space-y-3 pt-2">
           <div className="flex items-center justify-between">
             <h4 className="text-xs font-black uppercase tracking-wider text-indigo-600 dark:text-indigo-400 flex items-center gap-1.5">
@@ -451,24 +469,18 @@ export default function WorkoutLogger({ isOpen, onClose }) {
               onClick={handleAddExercise}
               className="text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1 cursor-pointer bg-indigo-50 dark:bg-indigo-950/60 px-2.5 py-1 rounded-lg border border-indigo-200 dark:border-indigo-800/60"
             >
-              <Plus className="w-3.5 h-3.5" /> + Add Variation
+              <Plus className="w-3.5 h-3.5" /> + Add Exercise
             </button>
           </div>
 
           <div className="space-y-3">
             {exercises.map((ex, exIdx) => {
-              const variationNum = (exIdx % 3) + 1;
-              const isFirstMuscle = exIdx < 3;
               return (
                 <div key={exIdx} className="p-3 sm:p-4 bg-slate-50 dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 rounded-xl space-y-3">
                   <div className="flex items-center justify-between gap-2">
                     <div className="flex items-center gap-2 flex-1">
-                      <span className={`text-[10px] font-extrabold px-2 py-0.5 rounded-md uppercase font-mono tracking-wider shrink-0 ${
-                        isFirstMuscle
-                          ? 'bg-indigo-100 dark:bg-indigo-950/80 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800/60'
-                          : 'bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/60'
-                      }`}>
-                        {ex.muscle || `Muscle ${isFirstMuscle ? 1 : 2}`} • Var #{variationNum}
+                      <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-md uppercase font-mono tracking-wider shrink-0 bg-indigo-100 dark:bg-indigo-950/80 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800/60">
+                        {ex.muscle || 'Exercise'} • #{exIdx + 1}
                       </span>
                       <input
                         type="text"
@@ -555,7 +567,7 @@ export default function WorkoutLogger({ isOpen, onClose }) {
             rows="2"
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
-            placeholder="Felt strong on variation 2, progressive overload on 3rd sets..."
+            placeholder="Felt strong, progressive overload on 3rd sets..."
             className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-900 dark:text-white text-xs focus:outline-none focus:border-indigo-500 focus:bg-white dark:focus:bg-slate-900"
           />
         </div>
