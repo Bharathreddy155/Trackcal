@@ -7,6 +7,7 @@ import makeWASocket, {
 import qrcode from 'qrcode-terminal';
 import pino from 'pino';
 import path from 'path';
+import http from 'http';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
 import { handleWhatsAppMessage } from './services/commandHandler.js';
@@ -18,11 +19,53 @@ dotenv.config();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+const PORT = process.env.PORT || 10000;
 const SYNC_CODE = process.env.TRACKCAL_SYNC_CODE || 'bharath-bulking-70kg';
 const AUTH_DIR = path.join(__dirname, 'auth_info_baileys');
 
 // Cache to prevent responding to our own bot replies
 const sentMessageIds = new Set();
+let isWhatsAppConnected = false;
+let connectedUser = null;
+
+/**
+ * Lightweight HTTP server for Render Health Checks & Keep-Alive
+ */
+const server = http.createServer((req, res) => {
+  res.writeHead(200, { 'Content-Type': 'application/json' });
+  res.end(
+    JSON.stringify({
+      status: 'online',
+      whatsapp: isWhatsAppConnected ? 'connected' : 'disconnected',
+      user: connectedUser,
+      today: getTodayDateStr(),
+      syncCode: SYNC_CODE,
+      timestamp: new Date().toISOString()
+    })
+  );
+});
+
+server.listen(PORT, () => {
+  console.log(`🌐 Web Health Server running on port ${PORT} for Render Keep-Alive.`);
+});
+
+/**
+ * Self-ping mechanism to keep Render Free Tier awake 24/7
+ */
+function initKeepAlive() {
+  const renderUrl = process.env.RENDER_EXTERNAL_URL;
+  if (renderUrl) {
+    console.log(`⏰ Keep-alive active: Pinging ${renderUrl} every 10 minutes.`);
+    setInterval(async () => {
+      try {
+        await fetch(renderUrl);
+        console.log(`[Keep-Alive] Pinged ${renderUrl} successfully.`);
+      } catch (err) {
+        console.warn(`[Keep-Alive] Ping error:`, err.message);
+      }
+    }, 10 * 60 * 1000); // 10 mins
+  }
+}
 
 /**
  * Extracts plain text from various WhatsApp message structures
@@ -60,7 +103,7 @@ async function startWhatsAppBot() {
   const { version } = await fetchLatestBaileysVersion();
 
   console.log(`\n====================================================`);
-  console.log(`🤖 Trackcal WhatsApp QR Bot Starting...`);
+  console.log(`🤖 Trackcal WhatsApp QR Bot Starting (Baileys v${version.join('.')})`);
   console.log(`📱 Cloud Sync Code: ${SYNC_CODE}`);
   console.log(`====================================================\n`);
 
@@ -84,6 +127,7 @@ async function startWhatsAppBot() {
     }
 
     if (connection === 'close') {
+      isWhatsAppConnected = false;
       const statusCode = lastDisconnect?.error?.output?.statusCode;
       const shouldReconnect = statusCode !== DisconnectReason.loggedOut;
       console.log(`⚠️ Connection closed (${statusCode}). Reconnecting: ${shouldReconnect}...`);
@@ -93,14 +137,16 @@ async function startWhatsAppBot() {
         console.log('❌ Logged out. Delete bot/auth_info_baileys/ and restart to link again.');
       }
     } else if (connection === 'open') {
+      isWhatsAppConnected = true;
       const myNumber = sock.user?.id ? sock.user.id.split(':')[0] : 'User';
       const userJid = sock.user?.id ? `${myNumber}@s.whatsapp.net` : null;
+      connectedUser = sock.user?.name || `+${myNumber}`;
 
       console.log('\n✅ ============================================');
       console.log(`✅ WhatsApp Connected Successfully!`);
-      console.log(`📱 Phone: +${myNumber} (${sock.user?.name || 'Bharath'})`);
+      console.log(`📱 Phone: +${myNumber} (${connectedUser})`);
       console.log(`⚡ Daily Reminders: Active (9:00 PM & 10:30 PM)`);
-      console.log(`💬 Open WhatsApp and text "status" or "help" to yourself!`);
+      console.log(`💬 Text "status" or "help" on WhatsApp!`);
       console.log('✅ ============================================\n');
 
       if (userJid) {
@@ -159,4 +205,5 @@ async function startWhatsAppBot() {
   });
 }
 
+initKeepAlive();
 startWhatsAppBot().catch((err) => console.error('Fatal Bot Error:', err));

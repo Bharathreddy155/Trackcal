@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: trackcal-bot
+    env: node
+    plan: free
+    rootDir: bot
+    buildCommand: npm install
+    startCommand: node index.js
+    envVars:
+      - key: NODE_VERSION
+        value: 20.0.0
+      - key: TRACKCAL_SYNC_CODE
+        value: bharath-bulking-70kg
