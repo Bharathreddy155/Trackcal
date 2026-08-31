@@ -76,16 +76,27 @@ export function getTodayDateStr() {
 }
 
 /**
- * Fetches all Trackcal data for a given sync code from Firestore
+ * Fetches all Trackcal data for a given sync code from Firestore (checks trackcal_data then bulktrack_data)
  */
 export async function getTrackcalData(syncCode) {
   const code = (syncCode || process.env.TRACKCAL_SYNC_CODE || 'bharath-bulking-70kg').toLowerCase().trim();
-  const url = `${FIRESTORE_BASE_URL}/trackcal_data/${code}`;
-
+  
+  // Try trackcal_data first
   try {
-    const res = await fetch(url);
+    const res = await fetch(`${FIRESTORE_BASE_URL}/trackcal_data/${code}`);
     if (res.ok) {
       const doc = await res.json();
+      return fromFirestore(doc.fields);
+    }
+  } catch (err) {
+    // continue to fallback
+  }
+
+  // Fallback to legacy bulktrack_data
+  try {
+    const legacyRes = await fetch(`${FIRESTORE_BASE_URL}/bulktrack_data/${code}`);
+    if (legacyRes.ok) {
+      const doc = await legacyRes.json();
       return fromFirestore(doc.fields);
     }
   } catch (err) {

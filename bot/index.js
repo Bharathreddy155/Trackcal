@@ -10,7 +10,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
 import { handleWhatsAppMessage } from './services/commandHandler.js';
-import { initReminderScheduler, setSocketInstance } from './services/reminderScheduler.js';
+import { initReminderScheduler } from './services/reminderScheduler.js';
 import { getTodayDateStr } from './services/firebaseService.js';
 
 dotenv.config();
@@ -21,24 +21,59 @@ const __dirname = path.dirname(__filename);
 const SYNC_CODE = process.env.TRACKCAL_SYNC_CODE || 'bharath-bulking-70kg';
 const AUTH_DIR = path.join(__dirname, 'auth_info_baileys');
 
+// Cache to prevent responding to our own bot replies
+const sentMessageIds = new Set();
+
+/**
+ * Extracts plain text from various WhatsApp message structures
+ */
+function extractMessageText(msg) {
+  if (!msg.message) return '';
+  const m = msg.message;
+
+  return (
+    m.conversation ||
+    m.extendedTextMessage?.text ||
+    m.imageMessage?.caption ||
+    m.videoMessage?.caption ||
+    m.documentMessage?.caption ||
+    m.ephemeralMessage?.message?.conversation ||
+    m.ephemeralMessage?.message?.extendedTextMessage?.text ||
+    m.viewOnceMessage?.message?.conversation ||
+    m.viewOnceMessage?.message?.extendedTextMessage?.text ||
+    m.viewOnceMessageV2?.message?.conversation ||
+    m.viewOnceMessageV2?.message?.extendedTextMessage?.text ||
+    ''
+  ).trim();
+}
+
+/**
+ * Checks if text is an automated bot response
+ */
+function isBotResponse(text) {
+  const botPrefixes = ['🤖', '📊', '⚡', '🥛', '⚖️', '✅', '💪', '👋', '⏰', '🌙', '⚠️', '🚀'];
+  return botPrefixes.some((p) => text.startsWith(p));
+}
+
 async function startWhatsAppBot() {
   const { state, saveCreds } = await useMultiFileAuthState(AUTH_DIR);
-  const { version, isLatest } = await fetchLatestBaileysVersion();
+  const { version } = await fetchLatestBaileysVersion();
 
-  console.log(`====================================================`);
-  console.log(`🤖 Starting Trackcal WhatsApp QR Bot (v${version.join('.')})`);
+  console.log(`\n====================================================`);
+  console.log(`🤖 Trackcal WhatsApp QR Bot Starting...`);
   console.log(`📱 Cloud Sync Code: ${SYNC_CODE}`);
-  console.log(`====================================================`);
+  console.log(`====================================================\n`);
 
   const sock = makeWASocket({
     version,
     auth: state,
     logger: pino({ level: 'silent' }),
     printQRInTerminal: false,
-    generateHighQualityLinkPreview: true
+    generateHighQualityLinkPreview: true,
+    syncFullHistory: false
   });
 
-  // Listen for Connection State (QR Code generation & Ready state)
+  // Connection Updates
   sock.ev.on('connection.update', async (update) => {
     const { connection, lastDisconnect, qr } = update;
 
@@ -49,80 +84,76 @@ async function startWhatsAppBot() {
     }
 
     if (connection === 'close') {
-      const shouldReconnect =
-        lastDisconnect?.error?.output?.statusCode !== DisconnectReason.loggedOut;
-      console.log(`⚠️ Connection closed. Reconnecting: ${shouldReconnect}...`);
+      const statusCode = lastDisconnect?.error?.output?.statusCode;
+      const shouldReconnect = statusCode !== DisconnectReason.loggedOut;
+      console.log(`⚠️ Connection closed (${statusCode}). Reconnecting: ${shouldReconnect}...`);
       if (shouldReconnect) {
         setTimeout(startWhatsAppBot, 3000);
       } else {
-        console.log('❌ Logged out. Delete bot/auth_info_baileys/ and restart to scan again.');
+        console.log('❌ Logged out. Delete bot/auth_info_baileys/ and restart to link again.');
       }
     } else if (connection === 'open') {
-      const userJid = sock.user?.id ? sock.user.id.split(':')[0] + '@s.whatsapp.net' : null;
+      const myNumber = sock.user?.id ? sock.user.id.split(':')[0] : 'User';
+      const userJid = sock.user?.id ? `${myNumber}@s.whatsapp.net` : null;
 
-      console.log('✅ ============================================');
+      console.log('\n✅ ============================================');
       console.log(`✅ WhatsApp Connected Successfully!`);
-      console.log(`📱 User: ${sock.user?.name || 'Bharath'} (${userJid})`);
+      console.log(`📱 Phone: +${myNumber} (${sock.user?.name || 'Bharath'})`);
       console.log(`⚡ Daily Reminders: Active (9:00 PM & 10:30 PM)`);
+      console.log(`💬 Open WhatsApp and text "status" or "help" to yourself!`);
       console.log('✅ ============================================\n');
 
       if (userJid) {
         initReminderScheduler(SYNC_CODE, sock, userJid);
-
-        // Send a welcome message to yourself on first connect
-        try {
-          await sock.sendMessage(userJid, {
-            text:
-              `🚀 *Trackcal WhatsApp Bot Connected!*\n\n` +
-              `Hey Bharath! Your personal WhatsApp bulking assistant is now active and synced with your Trackcal cloud account (*${SYNC_CODE}*).\n\n` +
-              `Try replying with:\n` +
-              `• *status* — View today's calories & macros\n` +
-              `• *creatine* — Log daily 3g creatine\n` +
-              `• *whey* — Log 1 scoop whey protein\n` +
-              `• *weight 58.2* — Log today's weight\n` +
-              `• *help* — View all commands`
-          });
-        } catch (e) {
-          // non-critical
-        }
       }
     }
   });
 
-  // Save authentication credentials when updated
+  // Save auth state
   sock.ev.on('creds.update', saveCreds);
 
-  // Listen for Incoming Messages
+  // Incoming Messages Handler
   sock.ev.on('messages.upsert', async ({ messages, type }) => {
-    if (type !== 'notify') return;
+    if (type !== 'notify' && type !== 'append') return;
 
     for (const msg of messages) {
-      // Ignore messages sent by bot itself unless in self-chat
-      const fromMe = msg.key.fromMe;
-      const remoteJid = msg.key.remoteJid;
+      const msgId = msg.key?.id;
+      const remoteJid = msg.key?.remoteJid;
+      const fromMe = Boolean(msg.key?.fromMe);
 
-      // Extract message text from regular text or extended text message
-      const messageText =
-        msg.message?.conversation ||
-        msg.message?.extendedTextMessage?.text ||
-        msg.message?.imageMessage?.caption ||
-        '';
+      // Skip status broadcasts and group messages
+      if (!remoteJid || remoteJid === 'status@broadcast' || remoteJid.endsWith('@g.us')) {
+        continue;
+      }
 
-      if (!messageText.trim()) continue;
+      // If this message was sent by our bot, skip it to avoid reply loops
+      if (msgId && sentMessageIds.has(msgId)) {
+        sentMessageIds.delete(msgId);
+        continue;
+      }
 
-      // Only respond to 1-on-1 private messages (including message-to-yourself chat)
-      if (remoteJid.endsWith('@s.whatsapp.net')) {
-        console.log(`[WhatsApp Message] from: ${remoteJid} | text: "${messageText}"`);
+      const text = extractMessageText(msg);
+      if (!text) continue;
 
-        try {
-          const replyText = await handleWhatsAppMessage(messageText, SYNC_CODE);
-          await sock.sendMessage(remoteJid, { text: replyText }, { quoted: msg });
-        } catch (err) {
-          console.error('[Error handling message]:', err);
-          await sock.sendMessage(remoteJid, {
-            text: '⚠️ An error occurred processing your request. Please try again.'
-          });
+      // Skip if it is an automated bot response header
+      if (isBotResponse(text)) continue;
+
+      console.log(`📩 [WhatsApp Message] from: ${remoteJid} (fromMe: ${fromMe}) | text: "${text}"`);
+
+      try {
+        const replyText = await handleWhatsAppMessage(text, SYNC_CODE);
+
+        // Send reply
+        const sent = await sock.sendMessage(remoteJid, { text: replyText }, { quoted: msg });
+        if (sent?.key?.id) {
+          sentMessageIds.add(sent.key.id);
         }
+        console.log(`📤 [WhatsApp Reply Sent] to: ${remoteJid}`);
+      } catch (err) {
+        console.error('[Error handling message]:', err);
+        await sock.sendMessage(remoteJid, {
+          text: '⚠️ An error occurred processing your request. Please try again.'
+        });
       }
     }
   });

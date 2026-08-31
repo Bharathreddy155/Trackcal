@@ -9,6 +9,7 @@ lerna-debug.log*
 
 node_modules
 bot/node_modules
+bot/auth_info_baileys
 dist
 dist-ssr
 *.local
