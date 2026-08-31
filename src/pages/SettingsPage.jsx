@@ -1,7 +1,7 @@
 // src/pages/SettingsPage.jsx
 import React, { useState } from 'react';
 import { Settings, User, Target, Database, Download, Upload, RefreshCw, Save, AlertTriangle, Cloud, CloudCheck, Wifi, Key, Sun, Moon } from 'lucide-react';
-import { useBulkTrack } from '../context/BulkTrackContext';
+import { useTrackcal } from '../context/TrackcalContext';
 
 export default function SettingsPage() {
   const {
@@ -19,7 +19,7 @@ export default function SettingsPage() {
     handleReset,
     theme,
     setTheme
-  } = useBulkTrack();
+  } = useTrackcal();
 
   const [profileForm, setProfileForm] = useState({ ...profile });
   const [targetForm, setTargetForm] = useState({ ...targets });

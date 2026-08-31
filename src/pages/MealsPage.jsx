@@ -1,11 +1,11 @@
 // src/pages/MealsPage.jsx
 import React, { useState } from 'react';
 import { Search, Plus, Star, Trash2, Edit2, Utensils, Check } from 'lucide-react';
-import { useBulkTrack } from '../context/BulkTrackContext';
+import { useTrackcal } from '../context/TrackcalContext';
 import CustomFoodModal from '../components/Meals/CustomFoodModal';
 
 export default function MealsPage() {
-  const { foods, toggleFavoriteFood, deleteFood } = useBulkTrack();
+  const { foods, toggleFavoriteFood, deleteFood } = useTrackcal();
 
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState('all'); // 'all' | 'fixed' | 'custom' | 'favorites'

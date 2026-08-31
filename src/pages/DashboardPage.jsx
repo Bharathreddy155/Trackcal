@@ -11,7 +11,7 @@ import AddFoodModal from '../components/Meals/AddFoodModal';
 import CustomFoodModal from '../components/Meals/CustomFoodModal';
 import WorkoutLogger from '../components/Workout/WorkoutLogger';
 
-import { useBulkTrack } from '../context/BulkTrackContext';
+import { useTrackcal } from '../context/TrackcalContext';
 import { calculateDailyTotals } from '../services/nutritionEngine';
 
 export default function DashboardPage() {
@@ -22,7 +22,7 @@ export default function DashboardPage() {
     mealTemplates,
     logMeal,
     undoMeal,
-  } = useBulkTrack();
+  } = useTrackcal();
 
   const [detailMealType, setDetailMealType] = useState(null);
   const [addFoodMealType, setAddFoodMealType] = useState(null);

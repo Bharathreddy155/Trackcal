@@ -1,11 +1,11 @@
 // src/pages/SupplementsPage.jsx
 import React from 'react';
 import { Pill, CheckCircle2, Circle, Sparkles, Flame } from 'lucide-react';
-import { useBulkTrack } from '../context/BulkTrackContext';
+import { useTrackcal } from '../context/TrackcalContext';
 import { getLastNDays, getDisplayDate } from '../services/dateService';
 
 export default function SupplementsPage() {
-  const { currentLog, dailyLogs, logWhey, undoWhey, logCreatine, undoCreatine } = useBulkTrack();
+  const { currentLog, dailyLogs, logWhey, undoWhey, logCreatine, undoCreatine } = useTrackcal();
 
   const wheyState = currentLog?.supplements?.whey || { taken: false, scoops: 1 };
   const creatineState = currentLog?.supplements?.creatine || { taken: false, grams: 3 };

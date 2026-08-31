@@ -1,10 +1,10 @@
 // src/components/Dashboard/SupplementBar.jsx
 import React, { useState } from 'react';
 import { Pill, CheckCircle2, Circle, AlertCircle, Plus, Sparkles } from 'lucide-react';
-import { useBulkTrack } from '../../context/BulkTrackContext';
+import { useTrackcal } from '../../context/TrackcalContext';
 
 export default function SupplementBar() {
-  const { currentLog, logWhey, undoWhey, logCreatine, undoCreatine } = useBulkTrack();
+  const { currentLog, logWhey, undoWhey, logCreatine, undoCreatine } = useTrackcal();
   const [scoopCount, setScoopCount] = useState(1);
 
   const wheyState = currentLog?.supplements?.whey || { taken: false, scoops: 1 };

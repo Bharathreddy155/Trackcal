@@ -2,10 +2,10 @@
 import React, { useState } from 'react';
 import Modal from '../Shared/Modal';
 import { Dumbbell, Plus, Trash2, CheckCircle2, Clock } from 'lucide-react';
-import { useBulkTrack } from '../../context/BulkTrackContext';
+import { useTrackcal } from '../../context/TrackcalContext';
 
 export default function WorkoutLogger({ isOpen, onClose }) {
-  const { currentLog, logWorkout } = useBulkTrack();
+  const { currentLog, logWorkout } = useTrackcal();
 
   const existing = currentLog?.workout || {};
 

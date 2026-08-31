@@ -1,10 +1,10 @@
 // src/components/Meals/CustomFoodModal.jsx
 import React, { useState } from 'react';
 import Modal from '../Shared/Modal';
-import { useBulkTrack } from '../../context/BulkTrackContext';
+import { useTrackcal } from '../../context/TrackcalContext';
 
 export default function CustomFoodModal({ isOpen, onClose }) {
-  const { saveCustomFood } = useBulkTrack();
+  const { saveCustomFood } = useTrackcal();
 
   const [formData, setFormData] = useState({
     name: '',

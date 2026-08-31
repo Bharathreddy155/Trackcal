@@ -1,11 +1,11 @@
 // src/components/Dashboard/QuickWeight.jsx
 import React, { useState } from 'react';
 import { Scale, Target, ArrowRight } from 'lucide-react';
-import { useBulkTrack } from '../../context/BulkTrackContext';
+import { useTrackcal } from '../../context/TrackcalContext';
 import ProgressBar from '../Shared/ProgressBar';
 
 export default function QuickWeight() {
-  const { profile, currentLog, logWeight } = useBulkTrack();
+  const { profile, currentLog, logWeight } = useTrackcal();
   const currentWeight = currentLog?.weight || profile.currentWeightKg || 57.5;
   const goalWeight = profile.goalWeightKg || 70.0;
   const startWeight = 57.5; // initial baseline

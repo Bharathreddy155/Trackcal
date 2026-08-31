@@ -12,18 +12,18 @@ function getObjectId(syncCode) {
     hash |= 0;
   }
   const hexHash = Math.abs(hash).toString(16).padStart(8, '0');
-  return `bulktrack_${cleanCode}_${hexHash}`.slice(0, 32).padEnd(32, '0');
+  return `trackcal_${cleanCode}_${hexHash}`.slice(0, 32).padEnd(32, '0');
 }
 
 /**
- * Pushes local BulkTrack data to the Cloud API
+ * Pushes local Trackcal data to the Cloud API
  */
 export async function pushCloudData(syncCode, payload) {
   const id = getObjectId(syncCode);
   const url = `${API_BASE_URL}/${id}`;
 
   const bodyData = {
-    name: `BulkTrack - ${syncCode}`,
+    name: `Trackcal - ${syncCode}`,
     data: {
       payload: JSON.stringify(payload),
       updatedAt: Date.now()
@@ -58,7 +58,7 @@ export async function pushCloudData(syncCode, payload) {
 }
 
 /**
- * Fetches latest remote BulkTrack data from Cloud API
+ * Fetches latest remote Trackcal data from Cloud API
  */
 export async function fetchCloudData(syncCode) {
   const id = getObjectId(syncCode);

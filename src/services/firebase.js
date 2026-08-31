@@ -1,6 +1,6 @@
 // src/services/firebase.js
 import { initializeApp, getApps } from 'firebase/app';
-import { getFirestore, doc, setDoc, onSnapshot, serverTimestamp } from 'firebase/firestore';
+import { getFirestore, doc, setDoc, onSnapshot, getDoc, serverTimestamp } from 'firebase/firestore';
 
 // Bharath's Official Firebase Project Configuration
 export const firebaseConfig = {
@@ -41,7 +41,9 @@ export function subscribeToCloudSync(syncCode, onDataReceived, onError) {
 
   try {
     if (!db) getFirebaseInstance();
-    const docRef = doc(db, 'bulktrack_data', syncCode.toLowerCase().trim());
+    const cleanCode = syncCode.toLowerCase().trim();
+    const docRef = doc(db, 'trackcal_data', cleanCode);
+    const legacyDocRef = doc(db, 'bulktrack_data', cleanCode);
 
     const unsubscribe = onSnapshot(
       docRef,
@@ -49,6 +51,16 @@ export function subscribeToCloudSync(syncCode, onDataReceived, onError) {
         if (snapshot.exists()) {
           const data = snapshot.data();
           onDataReceived(data);
+        } else {
+          // If trackcal_data doesn't exist yet, check legacy bulktrack_data
+          getDoc(legacyDocRef).then((legacySnap) => {
+            if (legacySnap.exists()) {
+              const legacyData = legacySnap.data();
+              onDataReceived(legacyData);
+              // Migrate to new collection
+              setDoc(docRef, legacyData, { merge: true }).catch(() => {});
+            }
+          }).catch(() => {});
         }
       },
       (err) => {
@@ -72,7 +84,8 @@ export async function pushToCloudSync(syncCode, payload) {
 
   try {
     if (!db) getFirebaseInstance();
-    const docRef = doc(db, 'bulktrack_data', syncCode.toLowerCase().trim());
+    const cleanCode = syncCode.toLowerCase().trim();
+    const docRef = doc(db, 'trackcal_data', cleanCode);
     const dataToSave = {
       ...payload,
       updatedAt: new Date().toISOString(),

@@ -1,10 +1,10 @@
 // src/components/Shared/Toast.jsx
 import React from 'react';
 import { CheckCircle2, AlertCircle, Info, X } from 'lucide-react';
-import { useBulkTrack } from '../../context/BulkTrackContext';
+import { useTrackcal } from '../../context/TrackcalContext';
 
 export default function Toast() {
-  const { toastMessage } = useBulkTrack();
+  const { toastMessage } = useTrackcal();
 
   if (!toastMessage) return null;
 

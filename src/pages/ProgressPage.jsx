@@ -13,13 +13,13 @@ import {
   CartesianGrid,
   Legend
 } from 'recharts';
-import { useBulkTrack } from '../context/BulkTrackContext';
+import { useTrackcal } from '../context/TrackcalContext';
 import { getLastNDays, getDisplayDate } from '../services/dateService';
 import { calculateDailyTotals } from '../services/nutritionEngine';
 import ProgressBar from '../components/Shared/ProgressBar';
 
 export default function ProgressPage() {
-  const { profile, targets, dailyLogs, foods, logWeight, theme } = useBulkTrack();
+  const { profile, targets, dailyLogs, foods, logWeight, theme } = useTrackcal();
 
   const [newWeightInput, setNewWeightInput] = useState(profile.currentWeightKg || 57.5);
 

@@ -1,12 +1,12 @@
 // src/pages/WeeklySummaryPage.jsx
 import React from 'react';
 import { BarChart2, Flame, Dumbbell, Pill, Calendar, ArrowUpRight } from 'lucide-react';
-import { useBulkTrack } from '../context/BulkTrackContext';
+import { useTrackcal } from '../context/TrackcalContext';
 import { getLastNDays } from '../services/dateService';
 import { calculateDailyTotals } from '../services/nutritionEngine';
 
 export default function WeeklySummaryPage() {
-  const { dailyLogs, foods, targets, profile } = useBulkTrack();
+  const { dailyLogs, foods, targets, profile } = useTrackcal();
 
   const last7Days = getLastNDays(7);
 

@@ -3,6 +3,16 @@ import { DEFAULT_PROFILE, DEFAULT_TARGETS, INITIAL_FOODS, DEFAULT_MEAL_TEMPLATES
 import { getFormattedDateString } from './dateService';
 
 const STORAGE_KEYS = {
+  PROFILE: 'trackcal_profile_v1',
+  TARGETS: 'trackcal_targets_v1',
+  FOODS: 'trackcal_foods_v1',
+  MEAL_TEMPLATES: 'trackcal_meal_templates_v1',
+  DAILY_LOGS: 'trackcal_daily_logs_v1',
+  WEIGHT_LOGS: 'trackcal_weight_logs_v1',
+  WORKOUT_LOGS: 'trackcal_workout_logs_v1'
+};
+
+const LEGACY_KEYS = {
   PROFILE: 'bulktrack_profile_v1',
   TARGETS: 'bulktrack_targets_v1',
   FOODS: 'bulktrack_foods_v1',
@@ -12,14 +22,17 @@ const STORAGE_KEYS = {
   WORKOUT_LOGS: 'bulktrack_workout_logs_v1'
 };
 
-export function loadProfile() {
+function getStoredItem(key, legacyKey, fallback) {
   try {
-    const data = localStorage.getItem(STORAGE_KEYS.PROFILE);
-    return data ? JSON.parse(data) : DEFAULT_PROFILE;
+    const data = localStorage.getItem(key) || localStorage.getItem(legacyKey);
+    return data ? JSON.parse(data) : fallback;
   } catch (e) {
-    console.error('Error loading profile:', e);
-    return DEFAULT_PROFILE;
+    return fallback;
   }
+}
+
+export function loadProfile() {
+  return getStoredItem(STORAGE_KEYS.PROFILE, LEGACY_KEYS.PROFILE, DEFAULT_PROFILE);
 }
 
 export function saveProfile(profile) {
@@ -31,12 +44,7 @@ export function saveProfile(profile) {
 }
 
 export function loadTargets() {
-  try {
-    const data = localStorage.getItem(STORAGE_KEYS.TARGETS);
-    return data ? JSON.parse(data) : DEFAULT_TARGETS;
-  } catch (e) {
-    return DEFAULT_TARGETS;
-  }
+  return getStoredItem(STORAGE_KEYS.TARGETS, LEGACY_KEYS.TARGETS, DEFAULT_TARGETS);
 }
 
 export function saveTargets(targets) {
@@ -48,12 +56,7 @@ export function saveTargets(targets) {
 }
 
 export function loadFoods() {
-  try {
-    const data = localStorage.getItem(STORAGE_KEYS.FOODS);
-    return data ? JSON.parse(data) : INITIAL_FOODS;
-  } catch (e) {
-    return INITIAL_FOODS;
-  }
+  return getStoredItem(STORAGE_KEYS.FOODS, LEGACY_KEYS.FOODS, INITIAL_FOODS);
 }
 
 export function saveFoods(foods) {
@@ -65,12 +68,7 @@ export function saveFoods(foods) {
 }
 
 export function loadMealTemplates() {
-  try {
-    const data = localStorage.getItem(STORAGE_KEYS.MEAL_TEMPLATES);
-    return data ? JSON.parse(data) : DEFAULT_MEAL_TEMPLATES;
-  } catch (e) {
-    return DEFAULT_MEAL_TEMPLATES;
-  }
+  return getStoredItem(STORAGE_KEYS.MEAL_TEMPLATES, LEGACY_KEYS.MEAL_TEMPLATES, DEFAULT_MEAL_TEMPLATES);
 }
 
 export function saveMealTemplates(templates) {
@@ -82,41 +80,35 @@ export function saveMealTemplates(templates) {
 }
 
 export function loadDailyLogs() {
-  try {
-    const data = localStorage.getItem(STORAGE_KEYS.DAILY_LOGS);
-    return data ? JSON.parse(data) : {};
-  } catch (e) {
-    return {};
-  }
+  return getStoredItem(STORAGE_KEYS.DAILY_LOGS, LEGACY_KEYS.DAILY_LOGS, {});
 }
 
-export function saveDailyLogs(logs) {
+export function saveDailyLogs(dailyLogs) {
   try {
-    localStorage.setItem(STORAGE_KEYS.DAILY_LOGS, JSON.stringify(logs));
+    localStorage.setItem(STORAGE_KEYS.DAILY_LOGS, JSON.stringify(dailyLogs));
   } catch (e) {
     console.error('Error saving daily logs:', e);
   }
 }
 
-/**
- * Creates default daily log structure if missing for given date
- */
-export function createEmptyDailyLog(dateStr = getFormattedDateString(), dayType = 'non-chicken') {
+export function createEmptyDailyLog(dateString) {
   return {
-    date: dateStr,
-    dayType: dayType, // 'non-chicken' | 'chicken'
+    date: dateString,
+    dayType: 'non-chicken',
     chickenQuantity: 175,
     curryQuantityLunch: 60,
     curryQuantityDinner: 60,
+    weight: null,
+    waterIntakeLiters: 0,
+    supplements: {
+      whey: { taken: false, scoops: 1, loggedAt: null },
+      creatine: { taken: false, grams: 3, loggedAt: null }
+    },
     meals: {
       breakfast: { isLogged: false, loggedAt: null, items: [] },
       lunch: { isLogged: false, loggedAt: null, items: [] },
       snack: { isLogged: false, loggedAt: null, items: [] },
       dinner: { isLogged: false, loggedAt: null, items: [] }
-    },
-    supplements: {
-      whey: { taken: false, scoops: 1, explicitExtra: false, loggedAt: null },
-      creatine: { taken: false, grams: 3, loggedAt: null }
     },
     workout: {
       completed: false,
@@ -124,15 +116,10 @@ export function createEmptyDailyLog(dateStr = getFormattedDateString(), dayType 
       durationMinutes: 0,
       notes: '',
       exercises: []
-    },
-    weight: null,
-    notes: ''
+    }
   };
 }
 
-/**
- * Exports all application data to downloadable JSON
- */
 export function exportAllData() {
   const exportPayload = {
     appName: 'Trackcal',
@@ -155,9 +142,6 @@ export function exportAllData() {
   URL.revokeObjectURL(url);
 }
 
-/**
- * Restores data from imported JSON file object
- */
 export function importAllData(jsonData) {
   if (!jsonData || (jsonData.appName !== 'Trackcal' && jsonData.appName !== 'BulkTrack')) {
     throw new Error('Invalid Trackcal backup file format.');
@@ -168,13 +152,14 @@ export function importAllData(jsonData) {
   if (jsonData.foods) saveFoods(jsonData.foods);
   if (jsonData.mealTemplates) saveMealTemplates(jsonData.mealTemplates);
   if (jsonData.dailyLogs) saveDailyLogs(jsonData.dailyLogs);
-
-  return true;
 }
 
-/**
- * Clears all LocalStorage data and re-initializes defaults
- */
 export function resetAllData() {
-  Object.values(STORAGE_KEYS).forEach(key => localStorage.removeItem(key));
+  Object.values(STORAGE_KEYS).forEach(k => localStorage.removeItem(k));
+  Object.values(LEGACY_KEYS).forEach(k => localStorage.removeItem(k));
+  saveProfile(DEFAULT_PROFILE);
+  saveTargets(DEFAULT_TARGETS);
+  saveFoods(INITIAL_FOODS);
+  saveMealTemplates(DEFAULT_MEAL_TEMPLATES);
+  saveDailyLogs({});
 }

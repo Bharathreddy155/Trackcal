@@ -1,7 +1,7 @@
 // src/components/Layout/Header.jsx
 import React from 'react';
 import { ChevronLeft, ChevronRight, Calendar, Sparkles, Sun, Moon } from 'lucide-react';
-import { useBulkTrack } from '../../context/BulkTrackContext';
+import { useTrackcal } from '../../context/TrackcalContext';
 import { getGreeting, getDisplayDate, getFormattedDateString } from '../../services/dateService';
 
 export default function Header() {
@@ -17,7 +17,7 @@ export default function Header() {
     setChickenQty,
     theme,
     toggleTheme
-  } = useBulkTrack();
+  } = useTrackcal();
 
   const isToday = currentDate === getFormattedDateString();
   const dayType = currentLog?.dayType || 'non-chicken';

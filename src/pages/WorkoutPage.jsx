@@ -1,13 +1,13 @@
 // src/pages/WorkoutPage.jsx
 import React, { useState } from 'react';
 import { Dumbbell, Plus, Calendar, Clock, CheckCircle2, Trophy, Flame } from 'lucide-react';
-import { useBulkTrack } from '../context/BulkTrackContext';
+import { useTrackcal } from '../context/TrackcalContext';
 import WorkoutLogger from '../components/Workout/WorkoutLogger';
 import { getLastNDays, getDisplayDate } from '../services/dateService';
 import ProgressBar from '../components/Shared/ProgressBar';
 
 export default function WorkoutPage() {
-  const { dailyLogs, currentLog, profile } = useBulkTrack();
+  const { dailyLogs, currentLog, profile } = useTrackcal();
   const [isLoggerOpen, setIsLoggerOpen] = useState(false);
 
   const weeklyTarget = profile.workoutDaysPerWeek || 4;

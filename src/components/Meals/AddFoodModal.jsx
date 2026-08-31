@@ -2,11 +2,11 @@
 import React, { useState, useMemo } from 'react';
 import Modal from '../Shared/Modal';
 import { Search, Star, Plus, Check, ArrowRight } from 'lucide-react';
-import { useBulkTrack } from '../../context/BulkTrackContext';
+import { useTrackcal } from '../../context/TrackcalContext';
 import { calculateFoodItemNutrition } from '../../services/nutritionEngine';
 
 export default function AddFoodModal({ isOpen, onClose, targetMealType, onOpenCustomFood }) {
-  const { foods, toggleFavoriteFood, addFoodToMeal } = useBulkTrack();
+  const { foods, toggleFavoriteFood, addFoodToMeal } = useTrackcal();
 
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState('all'); // 'all' | 'fixed' | 'custom' | 'favorites'

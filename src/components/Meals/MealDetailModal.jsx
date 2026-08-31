@@ -2,7 +2,7 @@
 import React from 'react';
 import Modal from '../Shared/Modal';
 import { Trash2, Plus, Save } from 'lucide-react';
-import { useBulkTrack } from '../../context/BulkTrackContext';
+import { useTrackcal } from '../../context/TrackcalContext';
 import { calculateFoodItemNutrition, calculateMealNutrition, getFoodById, getPlannedMealItems } from '../../services/nutritionEngine';
 
 export default function MealDetailModal({ isOpen, onClose, mealType, onOpenAddFood }) {
@@ -14,7 +14,7 @@ export default function MealDetailModal({ isOpen, onClose, mealType, onOpenAddFo
     removeFoodFromMeal,
     saveMealAsDefault,
     logMeal
-  } = useBulkTrack();
+  } = useTrackcal();
 
   if (!mealType) return null;
 
