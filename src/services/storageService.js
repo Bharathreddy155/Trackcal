@@ -135,7 +135,7 @@ export function createEmptyDailyLog(dateStr = getFormattedDateString(), dayType 
  */
 export function exportAllData() {
   const exportPayload = {
-    appName: 'BulkTrack',
+    appName: 'Trackcal',
     version: '1.0.0',
     exportedAt: new Date().toISOString(),
     profile: loadProfile(),
@@ -150,7 +150,7 @@ export function exportAllData() {
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = `bulktrack_backup_${getFormattedDateString()}.json`;
+  a.download = `trackcal_backup_${getFormattedDateString()}.json`;
   a.click();
   URL.revokeObjectURL(url);
 }
@@ -159,8 +159,8 @@ export function exportAllData() {
  * Restores data from imported JSON file object
  */
 export function importAllData(jsonData) {
-  if (!jsonData || !jsonData.appName === 'BulkTrack') {
-    throw new Error('Invalid BulkTrack backup file format.');
+  if (!jsonData || (jsonData.appName !== 'Trackcal' && jsonData.appName !== 'BulkTrack')) {
+    throw new Error('Invalid Trackcal backup file format.');
   }
 
   if (jsonData.profile) saveProfile(jsonData.profile);

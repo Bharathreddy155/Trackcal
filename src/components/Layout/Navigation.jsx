@@ -45,7 +45,7 @@ export default function Navigation({ activeTab, setActiveTab }) {
             <Zap className="w-6 h-6 fill-white" />
           </div>
           <div>
-            <h1 className="text-xl font-extrabold tracking-tight text-slate-900 dark:text-white">BulkTrack</h1>
+            <h1 className="text-xl font-extrabold tracking-tight text-slate-900 dark:text-white">Trackcal</h1>
           </div>
         </div>
 
