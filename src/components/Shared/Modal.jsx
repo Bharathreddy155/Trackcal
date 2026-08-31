@@ -19,15 +19,13 @@ export default function Modal({
     }
   }, [isOpen, title]);
 
-  // Handle escape key and preserve/lock background scroll
+  // Handle escape key without locking background scroll
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === 'Escape') onClose();
     };
 
     if (isOpen) {
-      const originalOverflow = document.body.style.overflow;
-      document.body.style.overflow = 'hidden';
       window.addEventListener('keydown', handleKeyDown);
 
       requestAnimationFrame(() => {
@@ -37,7 +35,6 @@ export default function Modal({
       });
 
       return () => {
-        document.body.style.overflow = originalOverflow || '';
         window.removeEventListener('keydown', handleKeyDown);
       };
     }
@@ -46,10 +43,10 @@ export default function Modal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-2.5 sm:p-4 md:p-6 pt-[calc(0.75rem+env(safe-area-inset-top,0px))] pb-[calc(0.75rem+env(safe-area-inset-bottom,0px))] overflow-hidden">
-      {/* Backdrop */}
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-2.5 sm:p-4 md:p-6 pt-[calc(0.75rem+env(safe-area-inset-top,0px))] pb-[calc(0.75rem+env(safe-area-inset-bottom,0px))] pointer-events-auto">
+      {/* Backdrop (semi-transparent with click-to-close and background visibility) */}
       <div 
-        className="fixed inset-0 bg-slate-900/60 dark:bg-slate-950/85 backdrop-blur-sm transition-opacity animate-fade-in"
+        className="fixed inset-0 bg-slate-900/40 dark:bg-slate-950/70 backdrop-blur-[2px] transition-opacity animate-fade-in"
         onClick={onClose}
       />
 
@@ -74,7 +71,7 @@ export default function Modal({
           </button>
         </div>
 
-        {/* Scrollable Content Area */}
+        {/* Scrollable Modal Content Area */}
         <div
           ref={contentRef}
           className="flex-1 overflow-y-auto overscroll-contain p-4 sm:p-6 text-slate-700 dark:text-slate-200 space-y-4 sm:space-y-5"
