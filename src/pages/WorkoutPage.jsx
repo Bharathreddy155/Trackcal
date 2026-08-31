@@ -1,8 +1,8 @@
 // src/pages/WorkoutPage.jsx
 import React, { useState } from 'react';
-import { Dumbbell, Plus, Calendar, Clock, CheckCircle2, Trophy, Flame } from 'lucide-react';
+import { Dumbbell, Plus, Calendar, Clock, CheckCircle2, Trophy, Flame, Layers, Sparkles } from 'lucide-react';
 import { useTrackcal } from '../context/TrackcalContext';
-import WorkoutLogger from '../components/Workout/WorkoutLogger';
+import WorkoutLogger, { WORKOUT_ROUTINES } from '../components/Workout/WorkoutLogger';
 import { getLastNDays, getDisplayDate } from '../services/dateService';
 import ProgressBar from '../components/Shared/ProgressBar';
 
@@ -45,21 +45,21 @@ export default function WorkoutPage() {
             <span>Workout Tracker</span>
           </h2>
           <p className="text-xs text-slate-500 dark:text-slate-400 font-medium mt-1">
-            Log your 4 days/week bulking workout routine, sets, reps, and heavy progressive overload.
+            4-Day Bulking Split • 2 Muscles per Session • 3 Variations each (6 Variations total).
           </p>
         </div>
 
         <button
           onClick={() => setIsLoggerOpen(true)}
-          className="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-black text-xs uppercase tracking-wider rounded-xl transition shadow-md shadow-indigo-500/20 flex items-center gap-1.5 self-start sm:self-auto"
+          className="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-black text-xs uppercase tracking-wider rounded-xl transition shadow-md shadow-indigo-500/20 flex items-center gap-1.5 self-start sm:self-auto cursor-pointer"
         >
           <Plus className="w-4 h-4" />
-          <span>+ Log Workout</span>
+          <span>+ Log Workout (6 Variations)</span>
         </button>
       </div>
 
       {/* Weekly Progress Banner */}
-      <div className="glass-panel p-6 rounded-2xl border border-slate-200 dark:border-slate-800 flex flex-col md:flex-row items-center justify-between gap-6">
+      <div className="glass-panel p-5 sm:p-6 rounded-2xl border border-slate-200 dark:border-slate-800 flex flex-col md:flex-row items-center justify-between gap-6">
         <div className="flex items-center gap-4 w-full md:w-auto">
           <div className="w-14 h-14 rounded-2xl bg-indigo-50 dark:bg-indigo-950/80 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-500/30 font-black flex items-center justify-center text-2xl shadow-sm">
             💪
@@ -102,21 +102,29 @@ export default function WorkoutPage() {
         {currentLog?.workout?.completed ? (
           <div className="p-4 bg-slate-50 dark:bg-slate-950/80 rounded-xl border border-slate-200 dark:border-slate-800 space-y-3">
             <div className="flex items-center justify-between">
-              <h3 className="text-base font-extrabold text-slate-900 dark:text-white">{currentLog.workout.name}</h3>
+              <div>
+                <h3 className="text-base font-extrabold text-slate-900 dark:text-white">{currentLog.workout.name}</h3>
+                <span className="text-xs text-indigo-600 dark:text-indigo-400 font-mono font-bold">
+                  {currentLog.workout.exercises?.length || 0} Variations Completed
+                </span>
+              </div>
               <span className="text-xs text-slate-500 dark:text-slate-400 font-mono flex items-center gap-1">
                 <Clock className="w-3.5 h-3.5 text-indigo-500 dark:text-indigo-400" />
                 {currentLog.workout.durationMinutes} mins
               </span>
             </div>
 
-            <div className="space-y-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               {currentLog.workout.exercises?.map((ex, idx) => (
                 <div key={idx} className="p-2.5 bg-white dark:bg-slate-900/80 rounded-lg border border-slate-200 dark:border-slate-800 flex items-center justify-between text-xs">
-                  <span className="font-bold text-slate-800 dark:text-slate-200">{ex.name}</span>
-                  <div className="flex items-center gap-2 font-mono">
+                  <div className="truncate pr-2">
+                    <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 mr-1.5 font-mono">#{idx + 1}</span>
+                    <span className="font-bold text-slate-800 dark:text-slate-200 truncate">{ex.name}</span>
+                  </div>
+                  <div className="flex items-center gap-1.5 font-mono shrink-0">
                     {ex.sets?.map((s, sIdx) => (
-                      <span key={sIdx} className="bg-slate-50 dark:bg-slate-950 px-2 py-0.5 rounded border border-slate-200 dark:border-slate-800 text-indigo-600 dark:text-indigo-400 font-bold">
-                        {s.weight}kg × {s.reps}
+                      <span key={sIdx} className="bg-slate-50 dark:bg-slate-950 px-1.5 py-0.5 rounded border border-slate-200 dark:border-slate-800 text-indigo-600 dark:text-indigo-400 font-bold text-[11px]">
+                        {s.weight}k×{s.reps}
                       </span>
                     ))}
                   </div>
@@ -125,10 +133,85 @@ export default function WorkoutPage() {
             </div>
           </div>
         ) : (
-          <div className="text-center py-8 text-slate-400 dark:text-slate-500 text-xs">
-            No workout logged for today. Tap "+ Log Workout" to add your training session!
+          <div className="text-center py-6 text-slate-400 dark:text-slate-500 text-xs">
+            No workout logged for today. Tap "+ Log Workout" to log your 6-variation session!
           </div>
         )}
+      </div>
+
+      {/* 2-Muscle Split Workout Routines (3 Variations per muscle = 6 total) */}
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <h3 className="text-sm font-extrabold text-slate-800 dark:text-white uppercase tracking-wider flex items-center gap-1.5">
+            <Layers className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+            <span>Workout Splits (6 Variations: 3 per Muscle)</span>
+          </h3>
+          <span className="text-xs text-slate-400 dark:text-slate-500 font-mono">4 Routines Available</span>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {Object.keys(WORKOUT_ROUTINES).map((key) => {
+            const routine = WORKOUT_ROUTINES[key];
+            const muscle1Exercises = routine.exercises.slice(0, 3);
+            const muscle2Exercises = routine.exercises.slice(3, 6);
+
+            return (
+              <div key={key} className="glass-panel p-5 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-4 flex flex-col justify-between">
+                <div>
+                  <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+                    <div>
+                      <h4 className="text-base font-extrabold text-slate-900 dark:text-white">{routine.name}</h4>
+                      <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">6 Total Variations (3 Sets each)</p>
+                    </div>
+                    <span className="text-[11px] font-extrabold px-2.5 py-1 rounded-full bg-indigo-50 dark:bg-indigo-950/80 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800/60 font-mono">
+                      6 Variations
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-3">
+                    {/* Muscle 1 (3 variations) */}
+                    <div className="p-3 bg-slate-50 dark:bg-slate-950/60 rounded-xl border border-slate-200 dark:border-slate-800/80 space-y-2">
+                      <span className="text-[11px] font-extrabold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider block">
+                        {routine.muscle1}
+                      </span>
+                      <div className="space-y-1.5 text-xs font-mono">
+                        {muscle1Exercises.map((ex, i) => (
+                          <div key={i} className="text-slate-700 dark:text-slate-300 flex items-start gap-1">
+                            <span className="text-slate-400 shrink-0">#{i + 1}</span>
+                            <span className="font-semibold text-slate-900 dark:text-white truncate">{ex.name}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Muscle 2 (3 variations) */}
+                    <div className="p-3 bg-slate-50 dark:bg-slate-950/60 rounded-xl border border-slate-200 dark:border-slate-800/80 space-y-2">
+                      <span className="text-[11px] font-extrabold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider block">
+                        {routine.muscle2}
+                      </span>
+                      <div className="space-y-1.5 text-xs font-mono">
+                        {muscle2Exercises.map((ex, i) => (
+                          <div key={i} className="text-slate-700 dark:text-slate-300 flex items-start gap-1">
+                            <span className="text-slate-400 shrink-0">#{i + 4}</span>
+                            <span className="font-semibold text-slate-900 dark:text-white truncate">{ex.name}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <button
+                  onClick={() => setIsLoggerOpen(true)}
+                  className="w-full py-2.5 bg-slate-100 hover:bg-indigo-600 hover:text-white text-slate-700 dark:bg-slate-800 dark:hover:bg-indigo-600 dark:text-slate-200 dark:hover:text-white text-xs font-bold rounded-xl transition cursor-pointer flex items-center justify-center gap-1.5"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>Log {routine.name}</span>
+                </button>
+              </div>
+            );
+          })}
+        </div>
       </div>
 
       {/* Workout History List */}
