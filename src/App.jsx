@@ -1,6 +1,6 @@
 // src/App.jsx
 import React, { useState } from 'react';
-import { BulkTrackProvider } from './context/BulkTrackContext';
+import { TrackcalProvider } from './context/TrackcalContext';
 import Navigation from './components/Layout/Navigation';
 import Header from './components/Layout/Header';
 import Toast from './components/Shared/Toast';
@@ -49,8 +49,8 @@ function AppContent() {
 
 export default function App() {
   return (
-    <BulkTrackProvider>
+    <TrackcalProvider>
       <AppContent />
-    </BulkTrackProvider>
+    </TrackcalProvider>
   );
 }
