@@ -1,37 +1,27 @@
 // bot/services/reminderScheduler.js
 import cron from 'node-cron';
-import twilio from 'twilio';
 import { getTrackcalData, getTodayDateStr } from './firebaseService.js';
 
-let twilioClient = null;
+let activeSocket = null;
+let userJid = null;
 
-function getTwilioClient() {
-  if (!twilioClient && process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN) {
-    twilioClient = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
-  }
-  return twilioClient;
+export function setSocketInstance(sock, jid) {
+  activeSocket = sock;
+  userJid = jid;
 }
 
 /**
- * Sends an outbound WhatsApp message to the user
+ * Sends an outbound WhatsApp message via Baileys socket
  */
 export async function sendWhatsAppAlert(messageText) {
-  const client = getTwilioClient();
-  const to = process.env.MY_WHATSAPP_NUMBER;
-  const from = process.env.TWILIO_WHATSAPP_NUMBER || 'whatsapp:+14155238886';
-
-  if (!client || !to) {
-    console.warn('[WhatsApp Bot] Cannot send alert: TWILIO credentials or MY_WHATSAPP_NUMBER not set in .env');
+  if (!activeSocket || !userJid) {
+    console.warn('[WhatsApp Bot] Cannot send alert: WhatsApp is not connected.');
     return false;
   }
 
   try {
-    const res = await client.messages.create({
-      body: messageText,
-      from: from,
-      to: to
-    });
-    console.log(`[WhatsApp Bot] Alert sent successfully! SID: ${res.sid}`);
+    await activeSocket.sendMessage(userJid, { text: messageText });
+    console.log('[WhatsApp Bot] Alert sent successfully to WhatsApp!');
     return true;
   } catch (err) {
     console.error('[WhatsApp Bot] Error sending WhatsApp message:', err.message);
@@ -42,7 +32,8 @@ export async function sendWhatsAppAlert(messageText) {
 /**
  * Initializes Scheduled Daily Cron Reminders
  */
-export function initReminderScheduler(syncCode) {
+export function initReminderScheduler(syncCode, sock, jid) {
+  setSocketInstance(sock, jid);
   console.log('[WhatsApp Bot] Initializing daily scheduled reminders...');
 
   // 1. 9:00 PM Evening Supplement & Creatine Check (0 21 * * *)
