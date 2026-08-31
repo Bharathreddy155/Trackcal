@@ -45,8 +45,8 @@ const server = http.createServer((req, res) => {
   );
 });
 
-server.listen(PORT, () => {
-  console.log(`🌐 Web Health Server running on port ${PORT} for Render Keep-Alive.`);
+server.listen(PORT, '0.0.0.0', () => {
+  console.log(`🌐 Web Health Server running on http://0.0.0.0:${PORT} for Render Keep-Alive.`);
 });
 
 /**
