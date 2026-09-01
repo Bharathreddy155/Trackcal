@@ -27,7 +27,8 @@ const AUTH_DIR = path.join(__dirname, 'auth_info_baileys');
 const sentMessageIds = new Set();
 let isWhatsAppConnected = false;
 let connectedUser = null;
-let myPhoneNumber = null;
+let myPhoneClean = null;
+let myLidClean = null;
 let myUserJid = null;
 
 /**
@@ -140,14 +141,16 @@ async function startWhatsAppBot() {
       }
     } else if (connection === 'open') {
       isWhatsAppConnected = true;
-      myPhoneNumber = sock.user?.id ? sock.user.id.split(':')[0] : null;
-      myUserJid = myPhoneNumber ? `${myPhoneNumber}@s.whatsapp.net` : null;
-      connectedUser = sock.user?.name || `+${myPhoneNumber}`;
+      myPhoneClean = sock.user?.id ? sock.user.id.split(':')[0].replace(/[^0-9]/g, '') : '';
+      myLidClean = sock.user?.lid ? sock.user.lid.split(':')[0].replace(/[^0-9]/g, '') : '';
+      myUserJid = myPhoneClean ? `${myPhoneClean}@s.whatsapp.net` : null;
+      connectedUser = sock.user?.name || `+${myPhoneClean}`;
 
       console.log('\n✅ ============================================');
       console.log(`✅ WhatsApp Connected Successfully!`);
-      console.log(`📱 Authenticated User Phone: +${myPhoneNumber} (${connectedUser})`);
-      console.log(`🔒 Security: ONLY responding to self-chat (+${myPhoneNumber})`);
+      console.log(`📱 User Phone: +${myPhoneClean} (${connectedUser})`);
+      if (myLidClean) console.log(`🆔 User LID: ${myLidClean}`);
+      console.log(`🔒 Security: ONLY responding to self-chat (+${myPhoneClean})`);
       console.log(`⚡ Daily Reminders: Active (9:00 PM & 10:30 PM)`);
       console.log('✅ ============================================\n');
 
@@ -174,14 +177,18 @@ async function startWhatsAppBot() {
         continue;
       }
 
-      // CRITICAL SECURITY FIX: ONLY respond in your own self-chat ("Message Yourself")
-      // NEVER reply to other contacts, friends, family, or external numbers!
+      // Check if message is from the user's self-chat ("Message Yourself")
+      // Handles standard phone numbers, LIDs, and devices
       const isSelfChat =
+        fromMe ||
         (myUserJid && remoteJid === myUserJid) ||
-        (myPhoneNumber && remoteJid.startsWith(myPhoneNumber));
+        (myPhoneClean && remoteJid.includes(myPhoneClean)) ||
+        (myLidClean && remoteJid.includes(myLidClean)) ||
+        (sock.user?.id && remoteJid === sock.user.id) ||
+        (sock.user?.lid && remoteJid === sock.user.lid);
 
       if (!isSelfChat) {
-        // Silently ignore all other chats!
+        // Silently ignore all other contacts and friends
         continue;
       }
 
@@ -197,7 +204,7 @@ async function startWhatsAppBot() {
       // Skip if it is an automated bot response header
       if (isBotResponse(text)) continue;
 
-      console.log(`📩 [Self-Chat Command] from: ${remoteJid} | text: "${text}"`);
+      console.log(`📩 [Self-Chat Command] from: ${remoteJid} (fromMe: ${fromMe}) | text: "${text}"`);
 
       try {
         const replyText = await handleWhatsAppMessage(text, SYNC_CODE);
