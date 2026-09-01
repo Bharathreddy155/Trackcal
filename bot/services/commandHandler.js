@@ -51,14 +51,14 @@ function calculateMacros(log, foodsList) {
 }
 
 /**
- * Handles incoming WhatsApp message and returns bot response string
+ * Handles incoming WhatsApp message and returns bot response string (or null if not a recognized command)
  */
 export async function handleWhatsAppMessage(bodyText, syncCode) {
   const text = (bodyText || '').trim().toLowerCase();
   const todayStr = getTodayDateStr();
 
-  // 1. HELP / MENU
-  if (text === 'help' || text === 'menu' || text === 'start') {
+  // 1. HELP / MENU / HI / START
+  if (text === 'help' || text === 'menu' || text === 'start' || text === 'commands' || text === 'trackcal' || text === 'hi' || text === 'hello') {
     return (
       `🤖 *Trackcal WhatsApp Assistant*\n\n` +
       `Here is what you can text me:\n\n` +
@@ -70,8 +70,7 @@ export async function handleWhatsAppMessage(bodyText, syncCode) {
       `🍗 *log lunch* — Mark lunch as logged\n` +
       `🥪 *log snack* — Mark snack as logged\n` +
       `🍛 *log dinner* — Mark dinner as logged\n` +
-      `💪 *workout* — Log today's workout completed\n` +
-      `🔄 *switch chicken* / *switch egg* — Change day type`
+      `💪 *workout* — Log today's workout completed`
     );
   }
 
@@ -115,7 +114,7 @@ export async function handleWhatsAppMessage(bodyText, syncCode) {
   }
 
   // 4. LOG WEIGHT
-  if (text.startsWith('weight') || text.includes('kg') || text.match(/^\d+(\.\d+)?$/)) {
+  if (text.startsWith('weight') || text.includes('kg') || (text.match(/^\d+(\.\d+)?$/) && parseFloat(text) >= 40 && parseFloat(text) <= 120)) {
     const numMatch = text.match(/(\d+(\.\d+)?)/);
     if (numMatch) {
       const weightVal = parseFloat(numMatch[1]);
@@ -137,7 +136,7 @@ export async function handleWhatsAppMessage(bodyText, syncCode) {
   }
 
   // 5. LOG MEALS (breakfast, lunch, snack, dinner)
-  if (text.startsWith('log ') || text.startsWith('eaten ') || text.startsWith('ate ')) {
+  if (text.startsWith('log ') || text.startsWith('eaten ') || text.startsWith('ate ') || text === 'breakfast' || text === 'lunch' || text === 'dinner' || text === 'snack') {
     let mealType = null;
     if (text.includes('breakfast')) mealType = 'breakfast';
     else if (text.includes('lunch')) mealType = 'lunch';
@@ -209,9 +208,6 @@ export async function handleWhatsAppMessage(bodyText, syncCode) {
     );
   }
 
-  // Fallback
-  return (
-    `👋 Hey Bharath! I received: "${bodyText}"\n\n` +
-    `Reply *status* to see today's calories & macros, or *help* to see all logging commands.`
-  );
+  // If text is not a command, do not respond (return null)
+  return null;
 }

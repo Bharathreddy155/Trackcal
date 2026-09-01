@@ -27,6 +27,8 @@ const AUTH_DIR = path.join(__dirname, 'auth_info_baileys');
 const sentMessageIds = new Set();
 let isWhatsAppConnected = false;
 let connectedUser = null;
+let myPhoneNumber = null;
+let myUserJid = null;
 
 /**
  * Lightweight HTTP server for Render Health Checks & Keep-Alive
@@ -138,19 +140,19 @@ async function startWhatsAppBot() {
       }
     } else if (connection === 'open') {
       isWhatsAppConnected = true;
-      const myNumber = sock.user?.id ? sock.user.id.split(':')[0] : 'User';
-      const userJid = sock.user?.id ? `${myNumber}@s.whatsapp.net` : null;
-      connectedUser = sock.user?.name || `+${myNumber}`;
+      myPhoneNumber = sock.user?.id ? sock.user.id.split(':')[0] : null;
+      myUserJid = myPhoneNumber ? `${myPhoneNumber}@s.whatsapp.net` : null;
+      connectedUser = sock.user?.name || `+${myPhoneNumber}`;
 
       console.log('\n✅ ============================================');
       console.log(`✅ WhatsApp Connected Successfully!`);
-      console.log(`📱 Phone: +${myNumber} (${connectedUser})`);
+      console.log(`📱 Authenticated User Phone: +${myPhoneNumber} (${connectedUser})`);
+      console.log(`🔒 Security: ONLY responding to self-chat (+${myPhoneNumber})`);
       console.log(`⚡ Daily Reminders: Active (9:00 PM & 10:30 PM)`);
-      console.log(`💬 Text "status" or "help" on WhatsApp!`);
       console.log('✅ ============================================\n');
 
-      if (userJid) {
-        initReminderScheduler(SYNC_CODE, sock, userJid);
+      if (myUserJid) {
+        initReminderScheduler(SYNC_CODE, sock, myUserJid);
       }
     }
   });
@@ -167,8 +169,19 @@ async function startWhatsAppBot() {
       const remoteJid = msg.key?.remoteJid;
       const fromMe = Boolean(msg.key?.fromMe);
 
-      // Skip status broadcasts and group messages
+      // Skip status broadcasts, groups, or invalid IDs
       if (!remoteJid || remoteJid === 'status@broadcast' || remoteJid.endsWith('@g.us')) {
+        continue;
+      }
+
+      // CRITICAL SECURITY FIX: ONLY respond in your own self-chat ("Message Yourself")
+      // NEVER reply to other contacts, friends, family, or external numbers!
+      const isSelfChat =
+        (myUserJid && remoteJid === myUserJid) ||
+        (myPhoneNumber && remoteJid.startsWith(myPhoneNumber));
+
+      if (!isSelfChat) {
+        // Silently ignore all other chats!
         continue;
       }
 
@@ -184,22 +197,24 @@ async function startWhatsAppBot() {
       // Skip if it is an automated bot response header
       if (isBotResponse(text)) continue;
 
-      console.log(`📩 [WhatsApp Message] from: ${remoteJid} (fromMe: ${fromMe}) | text: "${text}"`);
+      console.log(`📩 [Self-Chat Command] from: ${remoteJid} | text: "${text}"`);
 
       try {
         const replyText = await handleWhatsAppMessage(text, SYNC_CODE);
 
-        // Send reply
-        const sent = await sock.sendMessage(remoteJid, { text: replyText }, { quoted: msg });
+        // If message is not a recognized command, do not send any message
+        if (!replyText) {
+          continue;
+        }
+
+        // Send reply to self-chat
+        const sent = await sock.sendMessage(remoteJid, { text: replyText });
         if (sent?.key?.id) {
           sentMessageIds.add(sent.key.id);
         }
-        console.log(`📤 [WhatsApp Reply Sent] to: ${remoteJid}`);
+        console.log(`📤 [Reply Sent to Self-Chat]`);
       } catch (err) {
         console.error('[Error handling message]:', err);
-        await sock.sendMessage(remoteJid, {
-          text: '⚠️ An error occurred processing your request. Please try again.'
-        });
       }
     }
   });
