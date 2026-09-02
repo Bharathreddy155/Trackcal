@@ -1,5 +1,5 @@
 // src/pages/ProgressPage.jsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { TrendingUp, Scale, Flame, Dumbbell, Pill } from 'lucide-react';
 import {
   ResponsiveContainer,
