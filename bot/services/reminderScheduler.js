@@ -61,7 +61,7 @@ export function initReminderScheduler(syncCode, sock, jid) {
     const todayStr = getTodayDateStr();
     const data = await getTrackcalData(syncCode);
     const todayLog = data?.dailyLogs?.[todayStr] || {};
-    const targets = data?.targets || { calories: 2725, protein: 105 };
+    const targets = data?.targets || { calories: 2815, protein: 105, carbs: 415, fat: 73, fiber: 35 };
 
     const workoutDone = todayLog?.workout?.completed ? '✅ Done' : '❌ Missed';
     const creatineDone = todayLog?.supplements?.creatine?.taken ? '✅ Taken' : '❌ Missed';

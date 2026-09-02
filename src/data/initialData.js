@@ -12,21 +12,21 @@ export const DEFAULT_PROFILE = {
 };
 
 export const DEFAULT_TARGETS = {
-  calories: 2725, // range 2700 - 2750
-  caloriesMin: 2700,
-  caloriesMax: 2750,
-  protein: 105,   // range 100 - 110
+  calories: 2815, // range 2800 - 2850 (~2,825 kcal planned)
+  caloriesMin: 2800,
+  caloriesMax: 2850,
+  protein: 105,   // target 100 - 110 (~137g actual whole food + whey)
   proteinMin: 100,
-  proteinMax: 110,
-  carbs: 395,     // range 390 - 400
-  carbsMin: 390,
-  carbsMax: 400,
-  fat: 77,        // range 75 - 80
-  fatMin: 75,
+  proteinMax: 140,
+  carbs: 415,     // ~400+ g (~415g planned)
+  carbsMin: 400,
+  carbsMax: 430,
+  fat: 73,        // range 70 - 80 (~73g planned)
+  fatMin: 70,
   fatMax: 80,
-  fiber: 33,      // range 30 - 35
+  fiber: 35,      // range 30 - 35 (~40g planned)
   fiberMin: 30,
-  fiberMax: 35
+  fiberMax: 45
 };
 
 export const INITIAL_FOODS = [
@@ -36,11 +36,11 @@ export const INITIAL_FOODS = [
     brand: 'YogaBar',
     servingSize: 75,
     servingUnit: 'g',
-    calories: 310,
+    calories: 270,
     protein: 19.5,
-    carbs: 45.0,
-    fat: 6.0,
-    fiber: 6.0,
+    carbs: 39.0,
+    fat: 5.7,
+    fiber: 8.3,
     category: 'Fixed',
     isFavorite: true,
     isCustom: false
@@ -51,10 +51,10 @@ export const INITIAL_FOODS = [
     brand: 'Fresh',
     servingSize: 200,
     servingUnit: 'ml',
-    calories: 214,
-    protein: 8.6,
-    carbs: 10.4,
-    fat: 15.6,
+    calories: 180,
+    protein: 6.5,
+    carbs: 10.0,
+    fat: 12.0,
     fiber: 0.0,
     category: 'Fixed',
     isFavorite: true,
@@ -84,7 +84,7 @@ export const INITIAL_FOODS = [
     calories: 24,
     protein: 0.8,
     carbs: 2.1,
-    fat: 1.5,
+    fat: 1.6,
     fiber: 1.7,
     category: 'Fixed',
     isFavorite: false,
@@ -98,7 +98,7 @@ export const INITIAL_FOODS = [
     servingUnit: 'g',
     calories: 56,
     protein: 3.0,
-    carbs: 1.1,
+    carbs: 1.5,
     fat: 4.9,
     fiber: 0.6,
     category: 'Fixed',
@@ -109,11 +109,11 @@ export const INITIAL_FOODS = [
     id: 'food_honey',
     name: 'Honey',
     brand: '',
-    servingSize: 10,
+    servingSize: 7,
     servingUnit: 'g',
-    calories: 30,
+    calories: 21,
     protein: 0.0,
-    carbs: 8.2,
+    carbs: 5.7,
     fat: 0.0,
     fiber: 0.0,
     category: 'Fixed',
@@ -122,15 +122,15 @@ export const INITIAL_FOODS = [
   },
   {
     id: 'food_cooked_rice',
-    name: 'Cooked Rice',
+    name: 'Cooked White Rice',
     brand: '',
-    servingSize: 225,
+    servingSize: 100,
     servingUnit: 'g',
-    calories: 292,
-    protein: 5.4,
-    carbs: 63.0,
-    fat: 0.7,
-    fiber: 0.9,
+    calories: 130,
+    protein: 2.69,
+    carbs: 28.23,
+    fat: 0.29,
+    fiber: 0.4,
     category: 'Fixed',
     isFavorite: true,
     isCustom: false
@@ -158,7 +158,7 @@ export const INITIAL_FOODS = [
     servingUnit: 'g',
     calories: 172,
     protein: 3.2,
-    carbs: 40.2,
+    carbs: 40.0,
     fat: 0.2,
     fiber: 6.0,
     category: 'Fixed',
@@ -169,13 +169,13 @@ export const INITIAL_FOODS = [
     id: 'food_carrot_cucumber',
     name: 'Carrot + Cucumber Salad',
     brand: '',
-    servingSize: 125,
+    servingSize: 100,
     servingUnit: 'g',
-    calories: 25,
-    protein: 0.8,
-    carbs: 5.5,
+    calories: 35,
+    protein: 1.0,
+    carbs: 7.0,
     fat: 0.2,
-    fiber: 2.2,
+    fiber: 2.5,
     category: 'Fixed',
     isFavorite: false,
     isCustom: false
@@ -186,11 +186,11 @@ export const INITIAL_FOODS = [
     brand: 'Homemade',
     servingSize: 60,
     servingUnit: 'g',
-    calories: 75,
-    protein: 1.5,
-    carbs: 4.0,
-    fat: 6.0,
-    fiber: 1.0,
+    calories: 42,
+    protein: 1.2,
+    carbs: 5.0,
+    fat: 1.8,
+    fiber: 1.2,
     category: 'Fixed',
     isFavorite: true,
     isCustom: false
@@ -215,43 +215,28 @@ export const INITIAL_FOODS = [
     id: 'food_bread',
     name: 'Whole Wheat Bread',
     brand: 'Standard',
-    servingSize: 2,
+    servingSize: 1,
     servingUnit: 'slice',
-    calories: 140,
-    protein: 5.0,
-    carbs: 26.0,
-    fat: 1.8,
-    fiber: 2.0,
+    calories: 70,
+    protein: 3.0,
+    carbs: 13.0,
+    fat: 1.0,
+    fiber: 1.0,
     category: 'Fixed',
     isFavorite: true,
     isCustom: false
   },
   {
-    id: 'food_groundnuts',
-    name: 'Groundnuts (Peanuts)',
-    brand: '',
-    servingSize: 20,
+    id: 'food_myfitness_pb',
+    name: 'MyFitness Crunchy Peanut Butter',
+    brand: 'MyFitness',
+    servingSize: 25,
     servingUnit: 'g',
-    calories: 113,
-    protein: 5.2,
-    carbs: 3.2,
-    fat: 9.8,
-    fiber: 1.7,
-    category: 'Fixed',
-    isFavorite: false,
-    isCustom: false
-  },
-  {
-    id: 'food_pintola_pb',
-    name: 'Pintola High Protein Dark Chocolate Peanut Butter',
-    brand: 'Pintola',
-    servingSize: 10,
-    servingUnit: 'g',
-    calories: 63,
-    protein: 3.4,
-    carbs: 2.3,
-    fat: 4.5,
-    fiber: 0.6,
+    calories: 156,
+    protein: 6.5,
+    carbs: 4.8,
+    fat: 12.5,
+    fiber: 2.0,
     category: 'Fixed',
     isFavorite: true,
     isCustom: false
@@ -285,21 +270,6 @@ export const INITIAL_FOODS = [
     category: 'Fixed',
     isFavorite: true,
     isCustom: false
-  },
-  {
-    id: 'food_apple',
-    name: 'Apple',
-    brand: 'Local',
-    servingSize: 150,
-    servingUnit: 'g',
-    calories: 78,
-    protein: 0.4,
-    carbs: 21.0,
-    fat: 0.3,
-    fiber: 3.6,
-    category: 'Fruit',
-    isFavorite: false,
-    isCustom: true
   }
 ];
 
@@ -312,27 +282,26 @@ export const DEFAULT_MEAL_TEMPLATES = {
       { foodId: 'food_banana', quantity: 2, unit: 'piece' },
       { foodId: 'food_chia_seeds', quantity: 5, unit: 'g' },
       { foodId: 'food_pumpkin_seeds', quantity: 10, unit: 'g' },
-      { foodId: 'food_honey', quantity: 10, unit: 'g' }
+      { foodId: 'food_honey', quantity: 7, unit: 'g' }
     ],
     lunch: [
-      { foodId: 'food_cooked_rice', quantity: 225, unit: 'g' },
+      { foodId: 'food_cooked_rice', quantity: 350, unit: 'g' },
       { foodId: 'food_egg', quantity: 2, unit: 'piece' },
-      { foodId: 'food_sweet_potato', quantity: 200, unit: 'g' },
-      { foodId: 'food_carrot_cucumber', quantity: 125, unit: 'g' },
+      { foodId: 'food_amul_rose_lassi', quantity: 200, unit: 'ml' },
+      { foodId: 'food_carrot_cucumber', quantity: 100, unit: 'g' },
       { foodId: 'food_homemade_curry', quantity: 60, unit: 'g' }
     ],
     snack: [
       { foodId: 'food_whey_leanfit', quantity: 1, unit: 'scoop' },
-      { foodId: 'food_bread', quantity: 2, unit: 'slice' },
-      { foodId: 'food_groundnuts', quantity: 20, unit: 'g' },
-      { foodId: 'food_pintola_pb', quantity: 10, unit: 'g' },
-      { foodId: 'food_chia_seeds', quantity: 5, unit: 'g' }
+      { foodId: 'food_bread', quantity: 3, unit: 'slice' },
+      { foodId: 'food_myfitness_pb', quantity: 25, unit: 'g' },
+      { foodId: 'food_chia_seeds', quantity: 5, unit: 'g' },
+      { foodId: 'food_sweet_potato', quantity: 200, unit: 'g' }
     ],
     dinner: [
-      { foodId: 'food_cooked_rice', quantity: 225, unit: 'g' },
+      { foodId: 'food_cooked_rice', quantity: 275, unit: 'g' },
       { foodId: 'food_egg', quantity: 2, unit: 'piece' },
-      { foodId: 'food_sweet_potato', quantity: 200, unit: 'g' },
-      { foodId: 'food_amul_rose_lassi', quantity: 200, unit: 'ml' },
+      { foodId: 'food_carrot_cucumber', quantity: 100, unit: 'g' },
       { foodId: 'food_homemade_curry', quantity: 60, unit: 'g' }
     ]
   },
@@ -343,27 +312,26 @@ export const DEFAULT_MEAL_TEMPLATES = {
       { foodId: 'food_banana', quantity: 2, unit: 'piece' },
       { foodId: 'food_chia_seeds', quantity: 5, unit: 'g' },
       { foodId: 'food_pumpkin_seeds', quantity: 10, unit: 'g' },
-      { foodId: 'food_honey', quantity: 10, unit: 'g' }
+      { foodId: 'food_honey', quantity: 7, unit: 'g' }
     ],
     lunch: [
-      { foodId: 'food_cooked_rice', quantity: 225, unit: 'g' },
-      { foodId: 'food_cooked_chicken', quantity: 175, unit: 'g' }, // Default 175g
-      { foodId: 'food_sweet_potato', quantity: 200, unit: 'g' },
-      { foodId: 'food_carrot_cucumber', quantity: 125, unit: 'g' },
+      { foodId: 'food_cooked_rice', quantity: 350, unit: 'g' },
+      { foodId: 'food_cooked_chicken', quantity: 175, unit: 'g' },
+      { foodId: 'food_amul_rose_lassi', quantity: 200, unit: 'ml' },
+      { foodId: 'food_carrot_cucumber', quantity: 100, unit: 'g' },
       { foodId: 'food_homemade_curry', quantity: 60, unit: 'g' }
     ],
     snack: [
       { foodId: 'food_whey_leanfit', quantity: 1, unit: 'scoop' },
-      { foodId: 'food_bread', quantity: 2, unit: 'slice' },
-      { foodId: 'food_groundnuts', quantity: 20, unit: 'g' },
-      { foodId: 'food_pintola_pb', quantity: 10, unit: 'g' },
-      { foodId: 'food_chia_seeds', quantity: 5, unit: 'g' }
+      { foodId: 'food_bread', quantity: 3, unit: 'slice' },
+      { foodId: 'food_myfitness_pb', quantity: 25, unit: 'g' },
+      { foodId: 'food_chia_seeds', quantity: 5, unit: 'g' },
+      { foodId: 'food_sweet_potato', quantity: 200, unit: 'g' }
     ],
     dinner: [
-      { foodId: 'food_cooked_rice', quantity: 225, unit: 'g' },
-      { foodId: 'food_cooked_chicken', quantity: 175, unit: 'g' }, // Default 175g
-      { foodId: 'food_sweet_potato', quantity: 200, unit: 'g' },
-      { foodId: 'food_amul_rose_lassi', quantity: 200, unit: 'ml' },
+      { foodId: 'food_cooked_rice', quantity: 275, unit: 'g' },
+      { foodId: 'food_cooked_chicken', quantity: 175, unit: 'g' },
+      { foodId: 'food_carrot_cucumber', quantity: 100, unit: 'g' },
       { foodId: 'food_homemade_curry', quantity: 60, unit: 'g' }
     ]
   }

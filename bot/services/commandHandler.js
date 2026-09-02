@@ -33,13 +33,13 @@ function calculateMacros(log, foodsList) {
     }
   }
 
-  // Supplement Whey
+  // Supplement Whey (LeanFit 1 scoop = 140 kcal, 24g protein)
   if (log?.supplements?.whey?.taken) {
     const scoops = log.supplements.whey.scoops || 1;
-    totalCalories += 130 * scoops;
-    totalProtein += 26 * scoops;
-    totalCarbs += 2 * scoops;
-    totalFat += 2 * scoops;
+    totalCalories += 140 * scoops;
+    totalProtein += 24 * scoops;
+    totalCarbs += 3 * scoops;
+    totalFat += 3.5 * scoops;
   }
 
   return {
@@ -184,7 +184,7 @@ export async function handleWhatsAppMessage(bodyText, syncCode) {
   if (text === 'status' || text === 'today' || text === 'summary' || text === 'report') {
     const data = await getTrackcalData(syncCode);
     const todayLog = data?.dailyLogs?.[todayStr] || {};
-    const targets = data?.targets || { calories: 2725, protein: 105, carbs: 395, fat: 77 };
+    const targets = data?.targets || { calories: 2815, protein: 105, carbs: 415, fat: 73, fiber: 35 };
     const macros = calculateMacros(todayLog, data?.foods);
 
     const caloriesLeft = Math.max(0, targets.calories - macros.calories);

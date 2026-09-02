@@ -3,6 +3,16 @@ import { DEFAULT_PROFILE, DEFAULT_TARGETS, INITIAL_FOODS, DEFAULT_MEAL_TEMPLATES
 import { getFormattedDateString } from './dateService';
 
 const STORAGE_KEYS = {
+  PROFILE: 'trackcal_profile_v2',
+  TARGETS: 'trackcal_targets_v2',
+  FOODS: 'trackcal_foods_v2',
+  MEAL_TEMPLATES: 'trackcal_meal_templates_v2',
+  DAILY_LOGS: 'trackcal_daily_logs_v2',
+  WEIGHT_LOGS: 'trackcal_weight_logs_v2',
+  WORKOUT_LOGS: 'trackcal_workout_logs_v2'
+};
+
+const LEGACY_KEYS = {
   PROFILE: 'trackcal_profile_v1',
   TARGETS: 'trackcal_targets_v1',
   FOODS: 'trackcal_foods_v1',
@@ -10,16 +20,6 @@ const STORAGE_KEYS = {
   DAILY_LOGS: 'trackcal_daily_logs_v1',
   WEIGHT_LOGS: 'trackcal_weight_logs_v1',
   WORKOUT_LOGS: 'trackcal_workout_logs_v1'
-};
-
-const LEGACY_KEYS = {
-  PROFILE: 'bulktrack_profile_v1',
-  TARGETS: 'bulktrack_targets_v1',
-  FOODS: 'bulktrack_foods_v1',
-  MEAL_TEMPLATES: 'bulktrack_meal_templates_v1',
-  DAILY_LOGS: 'bulktrack_daily_logs_v1',
-  WEIGHT_LOGS: 'bulktrack_weight_logs_v1',
-  WORKOUT_LOGS: 'bulktrack_workout_logs_v1'
 };
 
 function getStoredItem(key, legacyKey, fallback) {
@@ -44,7 +44,13 @@ export function saveProfile(profile) {
 }
 
 export function loadTargets() {
-  return getStoredItem(STORAGE_KEYS.TARGETS, LEGACY_KEYS.TARGETS, DEFAULT_TARGETS);
+  // Always prioritize updated 2,815 kcal targets
+  try {
+    const data = localStorage.getItem(STORAGE_KEYS.TARGETS);
+    return data ? JSON.parse(data) : DEFAULT_TARGETS;
+  } catch (e) {
+    return DEFAULT_TARGETS;
+  }
 }
 
 export function saveTargets(targets) {
@@ -56,7 +62,16 @@ export function saveTargets(targets) {
 }
 
 export function loadFoods() {
-  return getStoredItem(STORAGE_KEYS.FOODS, LEGACY_KEYS.FOODS, INITIAL_FOODS);
+  // Always load fresh INITIAL_FOODS combined with any custom foods created by user
+  try {
+    const saved = localStorage.getItem(STORAGE_KEYS.FOODS);
+    if (!saved) return INITIAL_FOODS;
+    const parsed = JSON.parse(saved);
+    const customFoods = Array.isArray(parsed) ? parsed.filter(f => f.isCustom) : [];
+    return [...INITIAL_FOODS, ...customFoods];
+  } catch (e) {
+    return INITIAL_FOODS;
+  }
 }
 
 export function saveFoods(foods) {
@@ -68,7 +83,12 @@ export function saveFoods(foods) {
 }
 
 export function loadMealTemplates() {
-  return getStoredItem(STORAGE_KEYS.MEAL_TEMPLATES, LEGACY_KEYS.MEAL_TEMPLATES, DEFAULT_MEAL_TEMPLATES);
+  try {
+    const data = localStorage.getItem(STORAGE_KEYS.MEAL_TEMPLATES);
+    return data ? JSON.parse(data) : DEFAULT_MEAL_TEMPLATES;
+  } catch (e) {
+    return DEFAULT_MEAL_TEMPLATES;
+  }
 }
 
 export function saveMealTemplates(templates) {
@@ -123,7 +143,7 @@ export function createEmptyDailyLog(dateString) {
 export function exportAllData() {
   const exportPayload = {
     appName: 'Trackcal',
-    version: '1.0.0',
+    version: '2.0.0',
     exportedAt: new Date().toISOString(),
     profile: loadProfile(),
     targets: loadTargets(),
@@ -143,23 +163,30 @@ export function exportAllData() {
 }
 
 export function importAllData(jsonData) {
-  if (!jsonData || (jsonData.appName !== 'Trackcal' && jsonData.appName !== 'BulkTrack')) {
-    throw new Error('Invalid Trackcal backup file format.');
+  try {
+    const data = typeof jsonData === 'string' ? JSON.parse(jsonData) : jsonData;
+    if (data.profile) saveProfile(data.profile);
+    if (data.targets) saveTargets(data.targets);
+    if (data.foods) saveFoods(data.foods);
+    if (data.mealTemplates) saveMealTemplates(data.mealTemplates);
+    if (data.dailyLogs) saveDailyLogs(data.dailyLogs);
+    return { success: true };
+  } catch (e) {
+    console.error('Import error:', e);
+    return { success: false, error: e.message };
   }
-
-  if (jsonData.profile) saveProfile(jsonData.profile);
-  if (jsonData.targets) saveTargets(jsonData.targets);
-  if (jsonData.foods) saveFoods(jsonData.foods);
-  if (jsonData.mealTemplates) saveMealTemplates(jsonData.mealTemplates);
-  if (jsonData.dailyLogs) saveDailyLogs(jsonData.dailyLogs);
 }
 
 export function resetAllData() {
-  Object.values(STORAGE_KEYS).forEach(k => localStorage.removeItem(k));
-  Object.values(LEGACY_KEYS).forEach(k => localStorage.removeItem(k));
-  saveProfile(DEFAULT_PROFILE);
-  saveTargets(DEFAULT_TARGETS);
-  saveFoods(INITIAL_FOODS);
-  saveMealTemplates(DEFAULT_MEAL_TEMPLATES);
-  saveDailyLogs({});
+  try {
+    saveProfile(DEFAULT_PROFILE);
+    saveTargets(DEFAULT_TARGETS);
+    saveFoods(INITIAL_FOODS);
+    saveMealTemplates(DEFAULT_MEAL_TEMPLATES);
+    saveDailyLogs({});
+    return { success: true };
+  } catch (e) {
+    console.error('Reset error:', e);
+    return { success: false, error: e.message };
+  }
 }
