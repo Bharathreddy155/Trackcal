@@ -19,18 +19,22 @@ import { calculateDailyTotals } from '../services/nutritionEngine';
 import ProgressBar from '../components/Shared/ProgressBar';
 
 export default function ProgressPage() {
-  const { profile, targets, dailyLogs, foods, logWeight, theme } = useTrackcal();
+  const { profile, targets, dailyLogs, foods, logWeight, latestWeight, theme } = useTrackcal();
 
-  const [newWeightInput, setNewWeightInput] = useState(profile.currentWeightKg || 57.5);
+  const currentWeight = latestWeight || profile.currentWeightKg || 57.5;
+  const [newWeightInput, setNewWeightInput] = useState(currentWeight);
+
+  useEffect(() => {
+    setNewWeightInput(currentWeight);
+  }, [currentWeight]);
 
   const startWeight = 57.5;
-  const currentWeight = profile.currentWeightKg || 57.5;
   const goalWeight = profile.goalWeightKg || 70.0;
   const remainingWeight = (goalWeight - currentWeight).toFixed(1);
 
   const totalGainGoal = goalWeight - startWeight;
-  const achievedGain = Math.max(0, currentWeight - startWeight);
-  const progressPercent = totalGainGoal > 0 ? Math.min(Math.round((achievedGain / totalGainGoal) * 100), 100) : 0;
+  const achievedGain = Math.max(0, currentWeight - startWeight).toFixed(1);
+  const progressPercent = totalGainGoal > 0 ? Math.min(Math.round((Number(achievedGain) / totalGainGoal) * 100), 100) : 0;
 
   const isDark = theme === 'dark';
   const gridStroke = isDark ? '#1e293b' : '#e2e8f0';

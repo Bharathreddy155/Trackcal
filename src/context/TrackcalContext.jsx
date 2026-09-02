@@ -433,11 +433,31 @@ export function TrackcalProvider({ children }) {
 
     setProfileState(prev => {
       const nextProfile = { ...prev, currentWeightKg: val };
-      syncToCloud(null, nextProfile);
       return nextProfile;
     });
+
+    setTimeout(() => {
+      syncToCloud();
+    }, 50);
+
     showToast(`Weight recorded: ${val} kg ⚖️`, 'success');
   };
+
+  // Latest recorded weight across historical logs
+  const latestWeight = (() => {
+    const currentLog = getCurrentDailyLog();
+    if (currentLog?.weight && Number(currentLog.weight) > 0) {
+      return Number(currentLog.weight);
+    }
+    const dates = Object.keys(dailyLogs).sort().reverse();
+    for (const d of dates) {
+      const w = dailyLogs[d]?.weight;
+      if (w && Number(w) > 0) {
+        return Number(w);
+      }
+    }
+    return profile?.currentWeightKg || 57.5;
+  })();
 
   // Custom Food CRUD
   const saveCustomFood = (foodData) => {
@@ -592,6 +612,7 @@ export function TrackcalProvider({ children }) {
     logWorkout,
     undoWorkout,
     logWeight,
+    latestWeight,
     syncCode,
     updateSyncCode,
     isCloudConnected,
