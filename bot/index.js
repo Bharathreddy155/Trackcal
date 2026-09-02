@@ -23,6 +23,9 @@ const PORT = process.env.PORT || 10000;
 const SYNC_CODE = process.env.TRACKCAL_SYNC_CODE || 'bharath-bulking-70kg';
 const AUTH_DIR = path.join(__dirname, 'auth_info_baileys');
 
+// PAUSE SWITCH: Set to true to completely disable WhatsApp connection and messages
+const IS_PAUSED = process.env.BOT_PAUSED !== 'false'; // Paused by default
+
 // Cache to prevent responding to our own bot replies
 const sentMessageIds = new Set();
 let isWhatsAppConnected = false;
@@ -38,8 +41,9 @@ const server = http.createServer((req, res) => {
   res.writeHead(200, { 'Content-Type': 'application/json' });
   res.end(
     JSON.stringify({
-      status: 'online',
-      whatsapp: isWhatsAppConnected ? 'connected' : 'disconnected',
+      status: IS_PAUSED ? 'paused' : 'online',
+      botActive: !IS_PAUSED,
+      whatsapp: isWhatsAppConnected ? 'connected' : 'disabled_or_paused',
       user: connectedUser,
       today: getTodayDateStr(),
       syncCode: SYNC_CODE,
@@ -49,7 +53,10 @@ const server = http.createServer((req, res) => {
 });
 
 server.listen(PORT, '0.0.0.0', () => {
-  console.log(`🌐 Web Health Server running on http://0.0.0.0:${PORT} for Render Keep-Alive.`);
+  console.log(`🌐 Web Health Server running on http://0.0.0.0:${PORT}`);
+  if (IS_PAUSED) {
+    console.log(`⏸️ Trackcal WhatsApp Bot is currently PAUSED. WhatsApp connection is disabled.`);
+  }
 });
 
 /**
@@ -57,7 +64,7 @@ server.listen(PORT, '0.0.0.0', () => {
  */
 function initKeepAlive() {
   const renderUrl = process.env.RENDER_EXTERNAL_URL;
-  if (renderUrl) {
+  if (renderUrl && !IS_PAUSED) {
     console.log(`⏰ Keep-alive active: Pinging ${renderUrl} every 10 minutes.`);
     setInterval(async () => {
       try {
@@ -102,6 +109,14 @@ function isBotResponse(text) {
 }
 
 async function startWhatsAppBot() {
+  if (IS_PAUSED) {
+    console.log(`\n====================================================`);
+    console.log(`⏸️ TRACKCAL BOT IS PAUSED`);
+    console.log(`WhatsApp connection and cron reminders are disabled.`);
+    console.log(`====================================================\n`);
+    return;
+  }
+
   const { state, saveCreds } = await useMultiFileAuthState(AUTH_DIR);
   const { version } = await fetchLatestBaileysVersion();
 
@@ -178,7 +193,6 @@ async function startWhatsAppBot() {
       }
 
       // Check if message is from the user's self-chat ("Message Yourself")
-      // Handles standard phone numbers, LIDs, and devices
       const isSelfChat =
         fromMe ||
         (myUserJid && remoteJid === myUserJid) ||
@@ -188,7 +202,6 @@ async function startWhatsAppBot() {
         (sock.user?.lid && remoteJid === sock.user.lid);
 
       if (!isSelfChat) {
-        // Silently ignore all other contacts and friends
         continue;
       }
 
@@ -209,12 +222,10 @@ async function startWhatsAppBot() {
       try {
         const replyText = await handleWhatsAppMessage(text, SYNC_CODE);
 
-        // If message is not a recognized command, do not send any message
         if (!replyText) {
           continue;
         }
 
-        // Send reply to self-chat
         const sent = await sock.sendMessage(remoteJid, { text: replyText });
         if (sent?.key?.id) {
           sentMessageIds.add(sent.key.id);
